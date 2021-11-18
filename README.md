@@ -10,7 +10,7 @@ It was updated in 2021 by Jennifer Glover**
 
 
 * Code was written at the University of Calgary
-* 
+
 * Updated at the Dominion Radio Astrophysical Observatory
 
 
