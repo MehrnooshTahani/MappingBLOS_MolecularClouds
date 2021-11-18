@@ -17,8 +17,8 @@ It was updated in 2021 by Jennifer Glover**
 -* Updated at the Dominion Radio Astrophysical Observatory
 
 
-** Undergraduate Co-op Student
+-** Undergraduate Co-op Student
 
-** Dominion Radio Astrophysical Observatory
+-** Dominion Radio Astrophysical Observatory
 
-** University of Victoria
+-** University of Victoria
