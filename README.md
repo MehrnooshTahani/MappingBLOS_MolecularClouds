@@ -28,18 +28,11 @@ The following modules are not included in the Python standard library and must b
 
 ## Authors and Contributors
 
-The code was originially written by Mehrnoosh Tahani*
+The code was originially written by **Mehrnoosh Tahani**
+ - written at the University of Calgary
+ - updated at the Dominion Radio Astrophysical Observatory (National Research Council Canada)
 
-It was updated in 2021 by Jennifer Glover**
-
-
--* Code was written at the University of Calgary
-
--* Updated at the Dominion Radio Astrophysical Observatory
-
-
--** Undergraduate Co-op Student
-
--** Dominion Radio Astrophysical Observatory
-
--** University of Victoria
+The code was upgraded in 2021 by **Jennifer Glover**
+ - Undergraduate co-op Student (National Research Council Canada) 
+   - Dominion Radio Astrophysical Observatory
+   - University of Victoria
