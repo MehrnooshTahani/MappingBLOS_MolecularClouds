@@ -13,7 +13,7 @@ url = 'https://ui.adsabs.harvard.edu/abs/2018A%26A...614A.100T/abstract'
 ## Getting Started
 
 ### Requirements
-The following modules are not included in the Python standard library and must be installed:
+The following packages must be installed:
 * [astropy](https://www.astropy.org/)
 * [adjustText ](https://adjusttext.readthedocs.io/en/latest/)
 * [matplotlib](https://matplotlib.org/)
@@ -22,8 +22,8 @@ The following modules are not included in the Python standard library and must b
 
 
 ### Configuration
-* The "Classes" folder is intended to be used as the starting point for resolving imports. 
-  * In PyCharm, a directory may be set as the starting point for resolving imports by selecting the directory and marking it as "Sources Root"
+* The "Classes" folder includes classes to be included as imports. 
+  
 
 
 ## Authors and Contributors
@@ -32,7 +32,9 @@ The code was originially written by **Mehrnoosh Tahani**
  - written at the University of Calgary
  - updated at the Dominion Radio Astrophysical Observatory (National Research Council Canada)
 
-The code was upgraded in 2021 by **Jennifer Glover**
+The code was updated in 2021 by **Jennifer Glover**
  - Undergraduate co-op Student (National Research Council Canada) 
    - Dominion Radio Astrophysical Observatory
    - University of Victoria
+
+The code uses outputs of a chemical evolution code. Any chemical evolution code that provides abundances vs extinction (or column density) can be used. In this version we used outputs of a chemical evolution code developed by **René Plume, at the University of Clagary**.
