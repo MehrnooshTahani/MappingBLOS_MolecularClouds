@@ -37,4 +37,4 @@ The code was updated in 2021 by **Jennifer Glover**
    - Dominion Radio Astrophysical Observatory
    - University of Victoria
 
-The code uses outputs of a chemical evolution code. Any chemical evolution code that provides abundances vs extinction (or column density) can be used. In this version we used outputs of a chemical evolution code developed by René Plume, at the University of Clagary.
+The code uses outputs of a chemical evolution code. Any chemical evolution code that provides abundances vs extinction (or column density) can be used. In this version we used outputs of a chemical evolution code developed by **René Plume**, at the University of Clagary.
