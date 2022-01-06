@@ -7,7 +7,7 @@ Mapping the line-of-sight component of magnetic fields associated with molecular
 
 Tahani et al. 2018:  
 A&A 614, A100 (2018); doi:10.1051/0004-6361/201732219  
-url = 'https://ui.adsabs.harvard.edu/abs/2018A%26A...614A.100T/abstract'
+url = 'https://www.aanda.org/articles/aa/full_html/2018/06/aa32219-17/aa32219-17.html'
 
 
 ## Getting Started
