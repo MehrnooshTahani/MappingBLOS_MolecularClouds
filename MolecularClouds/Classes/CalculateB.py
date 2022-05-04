@@ -4,7 +4,7 @@ This file contains the class to calculate BLOS values.
 """
 import pandas as pd
 import numpy as np
-import config
+from . import config
 
 
 # -------- CLASS DEFINITION --------

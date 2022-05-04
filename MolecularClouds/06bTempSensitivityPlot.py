@@ -17,9 +17,9 @@ regionOfInterest = Region(cloudName)
 
 # -------- DEFINE FILES AND PATHS --------
 currentDir = os.path.abspath(os.getcwd())
-BScaledFileDir = os.path.join(currentDir, 'FileOutput/'+cloudName+'/TemperatureSensitivity/')
-InitialPath = os.path.join(currentDir, 'FileOutput/'+cloudName+'/TemperatureSensitivity/' + 'B_Av_T0_n0.txt')
-saveFigurePath = os.path.join(currentDir, 'FileOutput/'+cloudName+'/Plots/BTemperatureSensitivity.png')
+BScaledFileDir = os.path.join(currentDir, 'FileOutput/'.replace('/', os.sep) + cloudName + '/TemperatureSensitivity/'.replace('/', os.sep))
+InitialPath = os.path.join(currentDir, 'FileOutput/'.replace('/', os.sep) + cloudName + '/TemperatureSensitivity/'.replace('/', os.sep) + 'B_Av_T0_n0.txt')
+saveFigurePath = os.path.join(currentDir, 'FileOutput/'.replace('/', os.sep) + cloudName + '/Plots/BTemperatureSensitivity.png'.replace('/', os.sep))
 # -------- DEFINE FILES AND PATHS. --------
 
 # -------- EXTRACT ORIGINAL BLOS VALUES --------

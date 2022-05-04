@@ -6,8 +6,8 @@ import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
 import os
-from CalculateB import CalculateB
-from RegionOfInterest import Region
+from .CalculateB import CalculateB
+from .RegionOfInterest import Region
 from statistics import mode
 
 
@@ -26,7 +26,7 @@ class FindOptimalRefPoints:
 
         # -------- LOAD AND UNPACK MATCHED RM AND EXTINCTION DATA --------
         currentDir = os.path.abspath(os.getcwd())
-        MatchedRMExtincPath = os.path.join(currentDir, 'FileOutput/' + cloudName + '/MatchedRMExtinction'
+        MatchedRMExtincPath = os.path.join(currentDir, 'FileOutput/'.replace('/', os.sep) + cloudName + '/MatchedRMExtinction'.replace('/', os.sep)
                                            + cloudName + '.txt')
         matchedRMExtinctionData = pd.read_csv(MatchedRMExtincPath, sep='\t')
         # -------- LOAD AND UNPACK MATCHED RM AND EXTINCTION DATA. --------
@@ -67,7 +67,7 @@ class FindOptimalRefPoints:
         Identifiers = list(DataNoRef.index)
         DataNoRef = DataNoRef.reset_index(drop=True)
 
-        DataNoRef.to_csv('/Users/jennifer/BLOSMapping/MolecularClouds/FileOutput/DataNoRef'+cloudName+'.txt')
+        DataNoRef.to_csv(currentDir + '/FileOutput/DataNoRef'.replace('/', os.sep) + cloudName + '.txt')
 
         # -------- CREATE A FIGURE --------
         plt.figure(figsize=(6, 4), dpi=120, facecolor='w', edgecolor='k')

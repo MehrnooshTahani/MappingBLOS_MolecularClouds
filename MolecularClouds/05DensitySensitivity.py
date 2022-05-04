@@ -3,7 +3,7 @@ This is the fifth stage of the BLOSMapping method where the dependence on densit
     - All parameters except for density are held constant, and the magnetic field is calculated with electron abundances
     corresponding to changes of 0 and +/- 1, 2.5, 5, 10, 20, 20, 40, and 50 % the fiducial input density
 """
-from CalculateB import CalculateB
+from Classes.CalculateB import CalculateB
 import os
 from MolecularClouds.Classes.RegionOfInterest import Region
 import pandas as pd
@@ -16,9 +16,9 @@ regionOfInterest = Region(cloudName)
 
 # -------- DEFINE FILES AND PATHS --------
 currentDir = os.path.abspath(os.getcwd())
-MatchedRMExtincPath = os.path.join(currentDir, 'FileOutput/'+cloudName+'/MatchedRMExtinction'+cloudName+'.txt')
-RefPointPath = os.path.join(currentDir, 'FileOutput/'+cloudName+'/RefPoints'+cloudName+'.txt')
-saveFileDir = os.path.join(currentDir, 'FileOutput/'+cloudName+'/DensitySensitivity/')
+MatchedRMExtincPath = os.path.join(currentDir, 'FileOutput/'.replace('/', os.sep) + cloudName + '/MatchedRMExtinction'.replace('/', os.sep) + cloudName + '.txt')
+RefPointPath = os.path.join(currentDir, 'FileOutput/'.replace('/', os.sep) + cloudName + '/RefPoints'.replace('/', os.sep) + cloudName + '.txt')
+saveFileDir = os.path.join(currentDir, 'FileOutput/'.replace('/', os.sep) + cloudName + '/DensitySensitivity/'.replace('/', os.sep))
 # -------- DEFINE FILES AND PATHS. --------
 
 # -------- READ REFERENCE POINT TABLE --------

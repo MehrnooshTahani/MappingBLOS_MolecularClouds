@@ -12,7 +12,7 @@ from Classes.RegionOfInterest import Region
 from Classes.FindAllPotentialRefPoints import FindAllPotentialReferencePoints
 from Classes.FindOptimalRefPoints import FindOptimalRefPoints
 import adjustText
-from CalculateB import CalculateB
+from Classes.CalculateB import CalculateB
 
 # -------- CHOOSE THE REGION OF INTEREST --------
 cloudName = input("Enter the name of the region of interest: ")
@@ -21,16 +21,17 @@ regionOfInterest = Region(cloudName)
 # -------- CHOOSE THE REGION OF INTEREST. --------
 
 # -------- DEFINE FILES AND PATHS --------
+#Directory name information
 currentDir = os.path.abspath(os.getcwd())
-saveFilePath_ALlPotentialRefPoints = os.path.join(currentDir, 'FileOutput/' + cloudName + '/AllPotentialRefPoints'
-                                                  + cloudName + '.txt')
-saveFilePath_ReferencePoints = os.path.join(currentDir, 'FileOutput/' + cloudName + '/RefPoints' + cloudName + '.txt')
-saveFilePath_ReferenceData = os.path.join(currentDir, 'FileOutput/' + cloudName + '/ReferenceData' + cloudName + '.txt')
-saveFigurePath_BLOSvsNRef_AllPotentialRefPoints = os.path.join(currentDir, 'FileOutput/' + cloudName +
-                                                               '/Plots/BLOS_vs_NRef_AllPotentialRefPoints.png')
-saveFigurePath_BLOSvsNRef_ChosenPotentialRefPoints = os.path.join(currentDir, 'FileOutput/' + cloudName +
-                                                                  '/Plots/BLOS_vs_NRef_ChosenRefPoints.png')
-saveFigureDir_RefPointMap = os.path.join(currentDir, 'FileOutput/' + cloudName + '/Plots/')
+fileOutputFolder = 'FileOutput/'.replace('/', os.sep)
+
+#Process Directory Names
+saveFilePath_ALlPotentialRefPoints = os.path.join(currentDir, fileOutputFolder + cloudName + '/AllPotentialRefPoints'.replace('/', os.sep) + cloudName + '.txt')
+saveFilePath_ReferencePoints = os.path.join(currentDir, fileOutputFolder + cloudName + '/RefPoints'.replace('/', os.sep) + cloudName + '.txt')
+saveFilePath_ReferenceData = os.path.join(currentDir, fileOutputFolder + cloudName + '/ReferenceData'.replace('/', os.sep) + cloudName + '.txt')
+saveFigurePath_BLOSvsNRef_AllPotentialRefPoints = os.path.join(currentDir, fileOutputFolder + cloudName + '/Plots/BLOS_vs_NRef_AllPotentialRefPoints.png'.replace('/', os.sep))
+saveFigurePath_BLOSvsNRef_ChosenPotentialRefPoints = os.path.join(currentDir, fileOutputFolder + cloudName + '/Plots/BLOS_vs_NRef_ChosenRefPoints.png'.replace('/', os.sep))
+saveFigureDir_RefPointMap = os.path.join(currentDir, fileOutputFolder + cloudName + '/Plots/'.replace('/', os.sep))
 # -------- DEFINE FILES AND PATHS. --------
 
 # -------- READ FITS FILE --------
@@ -60,10 +61,8 @@ if chooseAvThreshold == 'n':
 # -------- CHOOSE THE THRESHOLD EXTINCTION. --------
 
 # -------- FIND ALL POTENTIAL REFERENCE POINTS --------
-AllPotenitalRefPoints = FindAllPotentialReferencePoints(cloudName, Av_threshold,
-                                                        saveFilePath=saveFilePath_ALlPotentialRefPoints)
-print('Based on this threshold extinction, a total of {} potential reference points were found.'
-      .format(AllPotenitalRefPoints.numAllRefPoints))
+AllPotenitalRefPoints = FindAllPotentialReferencePoints(cloudName, Av_threshold, saveFilePath=saveFilePath_ALlPotentialRefPoints)
+print('Based on this threshold extinction, a total of {} potential reference points were found.'.format(AllPotenitalRefPoints.numAllRefPoints))
 
 print(AllPotenitalRefPoints.AllRefPoints)
 print('---------------------\n')
@@ -259,7 +258,7 @@ print('We will now check if any of the potential reference points have anomalous
 # -------- Define "anomalous"
 # Load and unpack all the rotation measure data for the region of interest
 currentDir = os.path.abspath(os.getcwd())
-MatchedRMExtincPath = os.path.join(currentDir, 'FileOutput/' + cloudName + '/MatchedRMExtinction'
+MatchedRMExtincPath = os.path.join(currentDir, 'FileOutput/'.replace('/', os.sep) + cloudName + '/MatchedRMExtinction'.replace('/', os.sep)
                                    + cloudName + '.txt')
 matchedRMExtinctionData = pd.read_csv(MatchedRMExtincPath, sep='\t')
 
@@ -306,7 +305,7 @@ print(chosenRefPoints)
 
 # -------- REASSESS STABILITY --------
 # -------- Load matched rm and extinction data
-MatchedRMExtincPath = os.path.join(currentDir, 'FileOutput/' + cloudName + '/MatchedRMExtinction'
+MatchedRMExtincPath = os.path.join(currentDir, 'FileOutput/'.replace('/', os.sep) + cloudName + '/MatchedRMExtinction'.replace('/', os.sep)
                                    + cloudName + '.txt')
 # -------- Load matched rm and extinction data.
 '''

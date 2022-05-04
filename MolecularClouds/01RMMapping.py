@@ -19,8 +19,8 @@ regionOfInterest = Region(cloudName)
 
 # -------- DEFINE FILES AND PATHS --------
 currentDir = os.path.abspath(os.getcwd())
-RMCatalogPath = os.path.join(currentDir, 'Data/RMCatalogue.txt')
-saveFigurePath = os.path.join(currentDir, 'FileOutput/' + cloudName + '/Plots/RMMapping' + cloudName + '.png')
+RMCatalogPath = os.path.join(currentDir, 'Data/RMCatalogue.txt'.replace('/', os.sep))
+saveFigurePath = os.path.join(currentDir, 'FileOutput/' + cloudName + '/Plots/RMMapping'.replace('/', os.sep) + cloudName + '.png')
 # -------- DEFINE FILES AND PATHS. --------
 
 

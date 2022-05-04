@@ -3,7 +3,7 @@ This is the sixth stage the BLOSMapping method where the dependence on temperatu
     - All parameters except for temperature are held constant, and the magnetic field is calculated with electron
     abundances corresponding to a change of +/-  5, 10, and 20 % the fiducial input temperature
 """
-from CalculateB import CalculateB
+from Classes.CalculateB import CalculateB
 import os
 from MolecularClouds.Classes.RegionOfInterest import Region
 import pandas as pd
@@ -16,9 +16,9 @@ regionOfInterest = Region(cloudName)
 
 # -------- DEFINE FILES AND PATHS --------
 currentDir = os.path.abspath(os.getcwd())
-MatchedRMExtincPath = os.path.join(currentDir, 'FileOutput/'+cloudName+'/MatchedRMExtinction'+cloudName+'.txt')
-RefPointPath = os.path.join(currentDir, 'FileOutput/'+cloudName+'/RefPoints'+cloudName+'.txt')
-saveFileDir = os.path.join(currentDir, 'FileOutput/'+cloudName+'/TemperatureSensitivity/')
+MatchedRMExtincPath = os.path.join(currentDir, 'FileOutput/'.replace('/', os.sep) + cloudName + '/MatchedRMExtinction'.replace('/', os.sep) + cloudName + '.txt')
+RefPointPath = os.path.join(currentDir, 'FileOutput/'.replace('/', os.sep) + cloudName + '/RefPoints'.replace('/', os.sep) + cloudName + '.txt')
+saveFileDir = os.path.join(currentDir, 'FileOutput/'.replace('/', os.sep) + cloudName + '/TemperatureSensitivity/'.replace('/', os.sep))
 # -------- DEFINE FILES AND PATHS. --------
 
 # -------- READ REFERENCE POINT TABLE --------

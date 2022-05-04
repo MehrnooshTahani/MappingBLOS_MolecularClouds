@@ -34,16 +34,16 @@ regionOfInterest = Region(cloudName)
 # -------- DEFINE FILES AND PATHS --------
 currentDir = os.path.abspath(os.getcwd())
 
-BFilePath = os.path.join(currentDir, 'FileOutput/' + cloudName + '/BLOSPoints' + cloudName + '.txt')
+BFilePath = os.path.join(currentDir, 'FileOutput/'.replace('/', os.sep) + cloudName + '/BLOSPoints'.replace('/', os.sep) + cloudName + '.txt')
 BData_Density50IncreasePath = os.path.join(currentDir,
-                                           'FileOutput/' + cloudName + '/DensitySensitivity/B_Av_T0_n+50.txt')
+                                           'FileOutput/'.replace('/', os.sep) + cloudName + '/DensitySensitivity/B_Av_T0_n+50.txt'.replace('/', os.sep))
 BData_Density50DecreasePath = os.path.join(currentDir,
-                                           'FileOutput/' + cloudName + '/DensitySensitivity/B_Av_T0_n-50.txt')
+                                           'FileOutput/'.replace('/', os.sep) + cloudName + '/DensitySensitivity/B_Av_T0_n-50.txt'.replace('/', os.sep))
 BData_Temp20IncreasePath = os.path.join(currentDir,
-                                        'FileOutput/' + cloudName + '/TemperatureSensitivity/B_Av_T+20_n0.txt')
+                                        'FileOutput/'.replace('/', os.sep) + cloudName + '/TemperatureSensitivity/B_Av_T+20_n0.txt'.replace('/', os.sep))
 BData_Temp20DecreasePath = os.path.join(currentDir,
-                                        'FileOutput/' + cloudName + '/TemperatureSensitivity/B_Av_T-20_n0.txt')
-saveFilePath = os.path.join(currentDir, 'FileOutput/' + cloudName + '/FinalBLOSResults' + cloudName + '.txt')
+                                        'FileOutput/'.replace('/', os.sep) + cloudName + '/TemperatureSensitivity/B_Av_T-20_n0.txt'.replace('/', os.sep))
+saveFilePath = os.path.join(currentDir, 'FileOutput/'.replace('/', os.sep) + cloudName + '/FinalBLOSResults'.replace('/', os.sep) + cloudName + '.txt')
 # -------- DEFINE FILES AND PATHS --------
 
 # -------- READ BLOS DATA--------

@@ -9,7 +9,7 @@ from astropy.wcs import WCS
 from astropy.io import fits
 import matplotlib.pyplot as plt
 from Classes.RegionOfInterest import Region
-from CalculateB import CalculateB
+from Classes.CalculateB import CalculateB
 
 
 # -------- FUNCTION DEFINITION --------
@@ -50,12 +50,12 @@ regionOfInterest = Region(cloudName)
 
 # -------- DEFINE FILES AND PATHS --------
 currentDir = os.path.abspath(os.getcwd())
-FilePath_ReferencePoints = os.path.join(currentDir, 'FileOutput/' + cloudName + '/RefPoints' + cloudName + '.txt')
-FilePath_MatchedRMExtinc = os.path.join(currentDir, 'FileOutput/' + cloudName + '/MatchedRMExtinction' + cloudName +
+FilePath_ReferencePoints = os.path.join(currentDir, 'FileOutput/'.replace('/', os.sep) + cloudName + '/RefPoints'.replace('/', os.sep) + cloudName + '.txt')
+FilePath_MatchedRMExtinc = os.path.join(currentDir, 'FileOutput/'.replace('/', os.sep) + cloudName + '/MatchedRMExtinction'.replace('/', os.sep) + cloudName +
                                         '.txt')
-saveFilePath_BLOSPoints = os.path.join(currentDir, 'FileOutput/' + cloudName + '/BLOSPoints' + cloudName + '.txt')
+saveFilePath_BLOSPoints = os.path.join(currentDir, 'FileOutput/'.replace('/', os.sep) + cloudName + '/BLOSPoints'.replace('/', os.sep) + cloudName + '.txt')
 saveFigurePath_BLOSPointMap = os.path.join(currentDir,
-                                           'FileOutput/' + cloudName + '/Plots/BLOSPointMap' + cloudName + '.png')
+                                           'FileOutput/'.replace('/', os.sep) + cloudName + '/Plots/BLOSPointMap'.replace('/', os.sep) + cloudName + '.png')
 # -------- DEFINE FILES AND PATHS. --------
 
 # -------- LOAD REFERENCE POINT DATA --------

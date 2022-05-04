@@ -23,8 +23,8 @@ regionOfInterest = Region(cloudName)
 
 # -------- DEFINE FILES AND PATHS --------
 currentDir = os.path.abspath(os.getcwd())
-RMCatalogPath = os.path.join(currentDir, 'Data/RMCatalogue.txt')
-saveFilePath = os.path.join(currentDir, 'FileOutput/' + cloudName + '/MatchedRMExtinction'
+RMCatalogPath = os.path.join(currentDir, 'Data/RMCatalogue.txt'.replace('/', os.sep))
+saveFilePath = os.path.join(currentDir, 'FileOutput/'.replace('/', os.sep) + cloudName + '/MatchedRMExtinction'.replace('/', os.sep)
                             + cloudName + '.txt')
 # -------- DEFINE FILES AND PATHS. --------
 

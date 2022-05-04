@@ -25,7 +25,7 @@ class FindAllPotentialReferencePoints:
 
         # -------- LOAD AND UNPACK MATCHED RM AND EXTINCTION DATA --------
         currentDir = os.path.abspath(os.getcwd())
-        MatchedRMExtincPath = os.path.join(currentDir, 'FileOutput/' + cloudName + '/MatchedRMExtinction'
+        MatchedRMExtincPath = os.path.join(currentDir, 'FileOutput/'.replace('/', os.sep) + cloudName + '/MatchedRMExtinction'.replace('/', os.sep)
                                            + cloudName + '.txt')
         matchedRMExtinctionData = pd.read_csv(MatchedRMExtincPath, sep='\t')
         # -------- LOAD AND UNPACK MATCHED RM AND EXTINCTION DATA. --------
