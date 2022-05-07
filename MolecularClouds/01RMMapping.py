@@ -18,9 +18,13 @@ regionOfInterest = Region(cloudName)
 # -------- CHOOSE THE REGION OF INTEREST. --------
 
 # -------- DEFINE FILES AND PATHS --------
+#Directory name fragments
 currentDir = os.path.abspath(os.getcwd())
-RMCatalogPath = os.path.join(currentDir, 'Data/RMCatalogue.txt'.replace('/', os.sep))
-saveFigurePath = os.path.join(currentDir, 'FileOutput/' + cloudName + '/Plots/RMMapping'.replace('/', os.sep) + cloudName + '.png')
+saveFigurePathFragment = ('FileOutput/' + cloudName + '/Plots/' + 'RMMapping' + cloudName + '.png').replace('/', os.sep)
+RMCatalogPathFragment = ('Data/' + 'RMCatalogue.txt').replace('/', os.sep)
+#Processed directory names
+RMCatalogPath = os.path.join(currentDir, RMCatalogPathFragment)
+saveFigurePath = os.path.join(currentDir, saveFigurePathFragment)
 # -------- DEFINE FILES AND PATHS. --------
 
 
@@ -41,9 +45,9 @@ def rm2RGB(rm):
         alpha = 1  # Optional: set the transparency
         if int(np.sign(item)) == -1:
             c.append((1, 0, 0, alpha))  # Negative rotation measures assigned red
-        if int(np.sign(item)) == 1:
+        elif int(np.sign(item)) == 1:
             c.append((0, 0, 1, alpha))  # Positive rotation measures assigned blue
-        if np.sign(item) == 0:
+        elif np.sign(item) == 0:
             c.append((0, 1, 0, alpha))  # Zero-value rotation measures assigned green
 
     # return the list of RGBA tuples and sizes

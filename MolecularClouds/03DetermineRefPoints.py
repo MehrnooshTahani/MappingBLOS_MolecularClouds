@@ -21,17 +21,35 @@ regionOfInterest = Region(cloudName)
 # -------- CHOOSE THE REGION OF INTEREST. --------
 
 # -------- DEFINE FILES AND PATHS --------
-#Directory name information
+#Directory name fragments
 currentDir = os.path.abspath(os.getcwd())
-fileOutputFolder = 'FileOutput/'.replace('/', os.sep)
+fileOutputFragment = 'FileOutput/'
+allPotentialRefPointsFragment = '/AllPotentialRefPoints'
+refPointsFragment = '/RefPoints'
+refDataFragment = '/ReferenceData'
+plotsFragment = '/Plots/'
+matchedRMExtinctionFragment = '/MatchedRMExtinction'
 
-#Process Directory Names
-saveFilePath_ALlPotentialRefPoints = os.path.join(currentDir, fileOutputFolder + cloudName + '/AllPotentialRefPoints'.replace('/', os.sep) + cloudName + '.txt')
-saveFilePath_ReferencePoints = os.path.join(currentDir, fileOutputFolder + cloudName + '/RefPoints'.replace('/', os.sep) + cloudName + '.txt')
-saveFilePath_ReferenceData = os.path.join(currentDir, fileOutputFolder + cloudName + '/ReferenceData'.replace('/', os.sep) + cloudName + '.txt')
-saveFigurePath_BLOSvsNRef_AllPotentialRefPoints = os.path.join(currentDir, fileOutputFolder + cloudName + '/Plots/BLOS_vs_NRef_AllPotentialRefPoints.png'.replace('/', os.sep))
-saveFigurePath_BLOSvsNRef_ChosenPotentialRefPoints = os.path.join(currentDir, fileOutputFolder + cloudName + '/Plots/BLOS_vs_NRef_ChosenRefPoints.png'.replace('/', os.sep))
-saveFigureDir_RefPointMap = os.path.join(currentDir, fileOutputFolder + cloudName + '/Plots/'.replace('/', os.sep))
+saveFilePath_AllPotentialRefPointsFragment = \
+    (fileOutputFragment + cloudName + allPotentialRefPointsFragment + cloudName + '.txt').replace('/', os.sep)
+saveFilePath_ReferencePointsFragment = \
+    (fileOutputFragment + cloudName + refPointsFragment + cloudName + '.txt').replace('/', os.sep)
+saveFilePath_ReferenceDataFragment = \
+    (fileOutputFragment + cloudName + refDataFragment + cloudName + '.txt').replace('/', os.sep)
+saveFigurePath_BLOSvsNRef_AllPotentialRefPointsFragment = \
+    (fileOutputFragment + cloudName + plotsFragment + 'BLOS_vs_NRef_AllPotentialRefPoints.png').replace('/', os.sep)
+saveFigurePath_BLOSvsNRef_ChosenPotentialRefPointsFragment = \
+    (fileOutputFragment + cloudName + plotsFragment + 'BLOS_vs_NRef_ChosenRefPoints.png').replace('/', os.sep)
+saveFigureDir_RefPointMapFragment = \
+    (fileOutputFragment + cloudName + plotsFragment).replace('/', os.sep)
+
+#Processsed directory names
+saveFilePath_ALlPotentialRefPoints = os.path.join(currentDir, saveFilePath_AllPotentialRefPointsFragment)
+saveFilePath_ReferencePoints = os.path.join(currentDir, saveFilePath_ReferencePointsFragment)
+saveFilePath_ReferenceData = os.path.join(currentDir, saveFilePath_ReferenceDataFragment)
+saveFigurePath_BLOSvsNRef_AllPotentialRefPoints = os.path.join(currentDir, saveFigurePath_BLOSvsNRef_AllPotentialRefPointsFragment)
+saveFigurePath_BLOSvsNRef_ChosenPotentialRefPoints = os.path.join(currentDir, saveFigurePath_BLOSvsNRef_ChosenPotentialRefPointsFragment)
+saveFigureDir_RefPointMap = os.path.join(currentDir, saveFigureDir_RefPointMapFragment)
 # -------- DEFINE FILES AND PATHS. --------
 
 # -------- READ FITS FILE --------
@@ -258,8 +276,8 @@ print('We will now check if any of the potential reference points have anomalous
 # -------- Define "anomalous"
 # Load and unpack all the rotation measure data for the region of interest
 currentDir = os.path.abspath(os.getcwd())
-MatchedRMExtincPath = os.path.join(currentDir, 'FileOutput/'.replace('/', os.sep) + cloudName + '/MatchedRMExtinction'.replace('/', os.sep)
-                                   + cloudName + '.txt')
+MatchedRMExtincPath = os.path.join(currentDir, (fileOutputFragment + cloudName + matchedRMExtinctionFragment
+                                   + cloudName + '.txt').replace('/', os.sep))
 matchedRMExtinctionData = pd.read_csv(MatchedRMExtincPath, sep='\t')
 
 # Choose a rotation measure corresponding to anomalous
@@ -305,8 +323,8 @@ print(chosenRefPoints)
 
 # -------- REASSESS STABILITY --------
 # -------- Load matched rm and extinction data
-MatchedRMExtincPath = os.path.join(currentDir, 'FileOutput/'.replace('/', os.sep) + cloudName + '/MatchedRMExtinction'.replace('/', os.sep)
-                                   + cloudName + '.txt')
+MatchedRMExtincPath = os.path.join(currentDir, (fileOutputFragment + cloudName + matchedRMExtinctionFragment
+                                   + cloudName + '.txt').replace('/', os.sep))
 # -------- Load matched rm and extinction data.
 '''
 We are going to start the plot off with all of the chosen reference points

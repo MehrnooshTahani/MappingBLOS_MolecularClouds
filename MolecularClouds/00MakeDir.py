@@ -35,5 +35,5 @@ if cloudName.lower() not in InFileOutput:
     os.mkdir('TemperatureSensitivity')
 
 print('Folder \''+cloudName+'\' with sub-folders: \'Plots\', \'DensitySensitivity\', and \'TemperatureSensitvity\''
-                            ' created in {}'.format(currentDir+'/FileOutput/'.replace('/', os.sep)))
+                            ' created in {}'.format(currentDir + '/FileOutput/'.replace('/', os.sep)))
 # -------- MAKE DIRECTORIES FOR THE REGION OF INTEREST. --------

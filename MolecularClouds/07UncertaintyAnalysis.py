@@ -32,18 +32,28 @@ regionOfInterest = Region(cloudName)
 # -------- CHOOSE THE REGION OF INTEREST. --------
 
 # -------- DEFINE FILES AND PATHS --------
+#Directory name fragments
 currentDir = os.path.abspath(os.getcwd())
+fileOutputFragment = 'FileOutput/'
+BLOSPointsFragment = '/BLOSPoints'
+DensitySensitivityFragment = '/DensitySensitivity/'
+TemperatureSensitivityFragment = '/TemperatureSensitivity/'
+FinalBLOSResultsFragment = '/FinalBLOSResults'
 
-BFilePath = os.path.join(currentDir, 'FileOutput/'.replace('/', os.sep) + cloudName + '/BLOSPoints'.replace('/', os.sep) + cloudName + '.txt')
-BData_Density50IncreasePath = os.path.join(currentDir,
-                                           'FileOutput/'.replace('/', os.sep) + cloudName + '/DensitySensitivity/B_Av_T0_n+50.txt'.replace('/', os.sep))
-BData_Density50DecreasePath = os.path.join(currentDir,
-                                           'FileOutput/'.replace('/', os.sep) + cloudName + '/DensitySensitivity/B_Av_T0_n-50.txt'.replace('/', os.sep))
-BData_Temp20IncreasePath = os.path.join(currentDir,
-                                        'FileOutput/'.replace('/', os.sep) + cloudName + '/TemperatureSensitivity/B_Av_T+20_n0.txt'.replace('/', os.sep))
-BData_Temp20DecreasePath = os.path.join(currentDir,
-                                        'FileOutput/'.replace('/', os.sep) + cloudName + '/TemperatureSensitivity/B_Av_T-20_n0.txt'.replace('/', os.sep))
-saveFilePath = os.path.join(currentDir, 'FileOutput/'.replace('/', os.sep) + cloudName + '/FinalBLOSResults'.replace('/', os.sep) + cloudName + '.txt')
+BFilePathFragment = (fileOutputFragment + cloudName + BLOSPointsFragment + cloudName + '.txt').replace('/', os.sep)
+BData_Density50IncreasePathFragment = (fileOutputFragment + cloudName + DensitySensitivityFragment + 'B_Av_T0_n+50.txt').replace('/', os.sep)
+BData_Density50DecreasePathFragment = (fileOutputFragment + cloudName + DensitySensitivityFragment + 'B_Av_T0_n-50.txt').replace('/', os.sep)
+BData_Temp20IncreasePathFragment = (fileOutputFragment + cloudName + TemperatureSensitivityFragment + 'B_Av_T+20_n0.txt').replace('/', os.sep)
+BData_Temp20DecreasePathFragment = (fileOutputFragment + cloudName + TemperatureSensitivityFragment + 'B_Av_T-20_n0.txt').replace('/', os.sep)
+saveFilePathFragment = (fileOutputFragment + cloudName + FinalBLOSResultsFragment + cloudName + '.txt').replace('/', os.sep)
+
+#Processed directory names
+BFilePath = os.path.join(currentDir, BFilePathFragment)
+BData_Density50IncreasePath = os.path.join(currentDir, BData_Density50IncreasePathFragment)
+BData_Density50DecreasePath = os.path.join(currentDir, BData_Density50DecreasePathFragment)
+BData_Temp20IncreasePath = os.path.join(currentDir, BData_Temp20IncreasePathFragment)
+BData_Temp20DecreasePath = os.path.join(currentDir, BData_Temp20DecreasePathFragment)
+saveFilePath = os.path.join(currentDir, saveFilePathFragment)
 # -------- DEFINE FILES AND PATHS --------
 
 # -------- READ BLOS DATA--------

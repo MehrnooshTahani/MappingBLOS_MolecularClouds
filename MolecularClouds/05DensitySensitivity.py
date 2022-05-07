@@ -15,10 +15,21 @@ regionOfInterest = Region(cloudName)
 # -------- CHOOSE THE REGION OF INTEREST. --------
 
 # -------- DEFINE FILES AND PATHS --------
+#Directory name fragments
 currentDir = os.path.abspath(os.getcwd())
-MatchedRMExtincPath = os.path.join(currentDir, 'FileOutput/'.replace('/', os.sep) + cloudName + '/MatchedRMExtinction'.replace('/', os.sep) + cloudName + '.txt')
-RefPointPath = os.path.join(currentDir, 'FileOutput/'.replace('/', os.sep) + cloudName + '/RefPoints'.replace('/', os.sep) + cloudName + '.txt')
-saveFileDir = os.path.join(currentDir, 'FileOutput/'.replace('/', os.sep) + cloudName + '/DensitySensitivity/'.replace('/', os.sep))
+fileOutputFragment = 'FileOutput/'
+matchedRMExtinctionFragment = '/MatchedRMExtinction'
+refPointsFragment = '/RefPoints'
+densitySensitivityFragment = '/DensitySensitivity/'
+
+MatchedRMExtincPathFragment = (fileOutputFragment + cloudName + matchedRMExtinctionFragment + cloudName + '.txt').replace('/', os.sep)
+RefPointPathFragment = (fileOutputFragment + cloudName + refPointsFragment + cloudName + '.txt').replace('/', os.sep)
+saveFileDirFragment = (fileOutputFragment + cloudName + densitySensitivityFragment).replace('/', os.sep)
+
+#Processsed directory names
+MatchedRMExtincPath = os.path.join(currentDir, MatchedRMExtincPathFragment)
+RefPointPath = os.path.join(currentDir, RefPointPathFragment)
+saveFileDir = os.path.join(currentDir, saveFileDirFragment)
 # -------- DEFINE FILES AND PATHS. --------
 
 # -------- READ REFERENCE POINT TABLE --------

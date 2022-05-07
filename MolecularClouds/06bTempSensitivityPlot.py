@@ -16,10 +16,20 @@ regionOfInterest = Region(cloudName)
 # -------- CHOOSE THE REGION OF INTEREST. --------
 
 # -------- DEFINE FILES AND PATHS --------
+#Directory name fragments
 currentDir = os.path.abspath(os.getcwd())
-BScaledFileDir = os.path.join(currentDir, 'FileOutput/'.replace('/', os.sep) + cloudName + '/TemperatureSensitivity/'.replace('/', os.sep))
-InitialPath = os.path.join(currentDir, 'FileOutput/'.replace('/', os.sep) + cloudName + '/TemperatureSensitivity/'.replace('/', os.sep) + 'B_Av_T0_n0.txt')
-saveFigurePath = os.path.join(currentDir, 'FileOutput/'.replace('/', os.sep) + cloudName + '/Plots/BTemperatureSensitivity.png'.replace('/', os.sep))
+fileOutputFragment = 'FileOutput/'
+temperatureSensitivityFragment = '/TemperatureSensitivity/'
+plotsFragment = '/Plots/'
+
+BScaledFileDirFragment = (fileOutputFragment + cloudName + temperatureSensitivityFragment).replace('/', os.sep)
+InitialPathFragment = (fileOutputFragment + cloudName + temperatureSensitivityFragment + 'B_Av_T0_n0.txt').replace('/', os.sep)
+saveFigurePathFragment = (fileOutputFragment + cloudName + plotsFragment + 'BTemperatureSensitivity.png').replace('/', os.sep)
+
+#Processsed directory names
+BScaledFileDir = os.path.join(currentDir, BScaledFileDirFragment)
+InitialPath = os.path.join(currentDir, InitialPathFragment)
+saveFigurePath = os.path.join(currentDir, saveFigurePathFragment)
 # -------- DEFINE FILES AND PATHS. --------
 
 # -------- EXTRACT ORIGINAL BLOS VALUES --------

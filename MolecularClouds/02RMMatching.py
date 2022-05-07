@@ -22,10 +22,13 @@ regionOfInterest = Region(cloudName)
 # -------- CHOOSE THE REGION OF INTEREST. --------
 
 # -------- DEFINE FILES AND PATHS --------
+#Directory name fragments
 currentDir = os.path.abspath(os.getcwd())
-RMCatalogPath = os.path.join(currentDir, 'Data/RMCatalogue.txt'.replace('/', os.sep))
-saveFilePath = os.path.join(currentDir, 'FileOutput/'.replace('/', os.sep) + cloudName + '/MatchedRMExtinction'.replace('/', os.sep)
-                            + cloudName + '.txt')
+saveFilePathFragment = ('FileOutput/' + cloudName + '/MatchedRMExtinction' + cloudName + '.txt').replace('/', os.sep)
+RMCatalogPathFragment = 'Data/RMCatalogue.txt'.replace('/', os.sep)
+#Processed directory names
+RMCatalogPath = os.path.join(currentDir, RMCatalogPathFragment)
+saveFilePath = os.path.join(currentDir, saveFilePathFragment)
 # -------- DEFINE FILES AND PATHS. --------
 
 # -------- READ FITS FILE --------
