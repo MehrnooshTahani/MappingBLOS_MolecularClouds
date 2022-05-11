@@ -1,0 +1,2 @@
+Number of Reference Points,Reference Extinction,Reference RM,Reference RM AvgErr,Reference RM Std
+6,0.4198829683333334,37.699999999999996,13.383333333333333,8.984171265805953
