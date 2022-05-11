@@ -35,12 +35,48 @@ TEMPLATE (with defaults)
 """
 import os
 from sys import exit
+from configparser import ConfigParser
+import MolecularClouds.Classes.config as config
+'''
 currentDir = os.path.abspath(os.getcwd())
-
-
+'''
 class Region:
     def __init__(self, regionName):
 
+        cloudParams = ConfigParser()
+        regionDataFileLoc = os.path.join(config.dir_root, config.dir_data, config.dir_cloudParameters, regionName.lower() + '.ini')
+        cloudParams.read(regionDataFileLoc)
+
+        """ Load Region Data """
+        # Distance to the region of interest:
+        self.distance = cloudParams['Cloud Info'].getfloat('distance')  # CHECK THIS [pc]
+        # Path to the fits file containing to the region of interest:
+        self.fitsFilePath = os.path.join(config.dir_root, config.dir_data, cloudParams['Cloud Info'].get('fitsFileName'))
+        self.fitsDataType = cloudParams['Cloud Info'].get('fitsDataType')
+        # Pixel limits of the region of interest in the fits file:
+        self.xmin = cloudParams['Cloud Info'].getfloat('xmin')
+        self.xmax = cloudParams['Cloud Info'].getfloat('xmax')
+        self.ymin = cloudParams['Cloud Info'].getfloat('ymin')
+        self.ymax = cloudParams['Cloud Info'].getfloat('ymax')
+        # Path to the fiducial extinction and electron abundance for the region of interest:
+        self.n0 = cloudParams['Cloud Info'].get('n0')
+        self.T0 = cloudParams['Cloud Info'].get('T0')
+        self.G0 = cloudParams['Cloud Info'].get('G0')  # can be 1 for most clouds unless clouds with many type o and b stars
+        Parameters = 'n' + self.n0 + '_T' + self.T0 + '_G' + self.G0
+        self.AvFileDir = os.path.join(config.dir_root, config.dir_data, config.dir_chemAbundance, Parameters)
+        self.AvFilePath = os.path.join(config.dir_root, config.dir_data, config.dir_chemAbundance, Parameters, 'Av_T0_n0.out')
+        # Galactic Latitude of the region of interest:
+        self.cloudLatitude = cloudParams['Cloud Info'].getfloat('cloudLatitude')
+        # Boundaries of the region of interest:
+        self.raHoursMax = cloudParams['Cloud Info'].getfloat('raHoursmax')
+        self.raMinsMax = cloudParams['Cloud Info'].getfloat('raMinsMax')
+        self.raSecMax = cloudParams['Cloud Info'].getfloat('raSecMax')
+        self.raHoursMin = cloudParams['Cloud Info'].getfloat('raHoursMin')
+        self.raMinsMin = cloudParams['Cloud Info'].getfloat('raMinsMin')
+        self.raSecMin = cloudParams['Cloud Info'].getfloat('raSecMin')
+        self.decDegMax = cloudParams['Cloud Info'].getfloat('decDegMax')
+        self.decDegMin = cloudParams['Cloud Info'].getfloat('decDegMin')
+        '''
         if regionName.lower() == 'aquila':
             """Parameters corresponding to the region containing the Aquila molecular cloud """
             # Distance to the region of interest:
@@ -448,3 +484,4 @@ class Region:
             print('There is no region of interest with this name.  Check spelling or create a new region of interest'
                   ' then try again.')
             exit()
+        '''

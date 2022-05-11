@@ -16,19 +16,15 @@ from Classes.RegionOfInterest import Region
 import Classes.config as config
 
 # -------- CHOOSE THE REGION OF INTEREST --------
-cloudName = input("Enter the name of the region of interest: ")
-cloudName = cloudName.capitalize()  # Ensure only the first letter is capitalized
+#cloudName = input("Enter the name of the region of interest: ")
+#cloudName = cloudName.capitalize()  # Ensure only the first letter is capitalized
+cloudName = config.cloud
 regionOfInterest = Region(cloudName)
 # -------- CHOOSE THE REGION OF INTEREST. --------
 
 # -------- DEFINE FILES AND PATHS --------
-#Directory name fragments
-currentDir = os.path.abspath(os.getcwd())
-saveFilePathFragment = ('FileOutput/' + cloudName + '/MatchedRMExtinction' + cloudName + '.txt').replace('/', os.sep)
-RMCatalogPathFragment = 'Data/RMCatalogue.txt'.replace('/', os.sep)
-#Processed directory names
-RMCatalogPath = os.path.join(currentDir, RMCatalogPathFragment)
-saveFilePath = os.path.join(currentDir, saveFilePathFragment)
+RMCatalogPath = os.path.join(config.dir_root, config.dir_data, config.file_RMCatalogue)
+saveFilePath = os.path.join(config.dir_root, config.dir_fileOutput, config.cloud, config.prefix_RMExtinctionMatch + config.cloud + '.txt')
 # -------- DEFINE FILES AND PATHS. --------
 
 # -------- READ FITS FILE --------
@@ -47,7 +43,7 @@ rmData = DataFile(RMCatalogPath, regionOfInterest.raHoursMax, regionOfInterest.r
 # -------- DEFINE THE ERROR RANGE --------
 # The physical limit on how far an extinction value can be from the rm and still be considered valid/applicable
 cloudDistance = regionOfInterest.distance  # [pc]
-cloudJeansLength = 1.  # [pc] MEHRNOOSH FIND THIS
+cloudJeansLength = config.cloudJeansLength  # [pc]
 minDiff = cloudJeansLength / cloudDistance  # [deg]
 
 minDiff_pix = minDiff / abs(hdu.header['CDELT1'])
@@ -78,6 +74,13 @@ Extinction_MaxInRangeDec = []
 Extinction_MaxInRange = []
 # -------- DEFINE PARAMETERS. --------
 
+# -------- PREPROCESS FITS DATA TYPE. --------
+# If fitsDataType is column density, then convert to visual extinction
+if regionOfInterest.fitsDataType == 'HydrogenColumnDensity':
+    hdu.data = hdu.data / config.VExtinct_2_Hcol
+
+# -------- PREPROCESS FITS DATA TYPE. --------
+
 # -------- MATCH ROTATION MEASURES AND EXTINCTION VALUES --------
 cntr = 0  # To keep track of how many matches have been made - numbering starts at 0
 # Go through all of the rotation measure values and match them to an extinction value
@@ -94,13 +97,7 @@ for index in range(len(rmData.targetRotationMeasures)):
 
         # If the rm lies on a point with data:
         if hdu.data[py, px] != -1 and math.isnan(hdu.data[py, px]) is False:
-
-            # If fitsDataType is column density, then convert to visual extinction
-            if regionOfInterest.fitsDataType == 'HydrogenColumnDensity':
-                extinction = hdu.data[py, px] / config.VExtinct_2_Hcol
-            else:
-                extinction = hdu.data[py, px]
-
+            extinction = hdu.data[py, px]
             # ---- Negative extinction (the rm value landed on a negative pixel)
             # Negative extinction is not physical; take the extinction value to be an average of surrounding pixels
             if extinction < 0:
@@ -118,10 +115,7 @@ for index in range(len(rmData.targetRotationMeasures)):
                     for pyy in range(ind_ymin, ind_ymax):
                         if 0 <= pxx < hdu.data.shape[1] and 0 <= pyy < hdu.data.shape[0]:
                             # If fitsDataType is column density, then convert to visual extinction
-                            if regionOfInterest.fitsDataType == 'HydrogenColumnDensity':
-                                extinctionPixel = hdu.data[pyy, pxx] / config.VExtinct_2_Hcol
-                            else:
-                                extinctionPixel = hdu.data[pyy, pxx]
+                            extinctionPixel = hdu.data[pyy, pxx]
                             surrondingExtinction.append(extinctionPixel)
                 extinction = np.avg(surrondingExtinction)
             # ---- Negative extinction.
@@ -155,11 +149,7 @@ for index in range(len(rmData.targetRotationMeasures)):
             for pxx in range(ind_xmin, ind_xmax):
                 for pyy in range(ind_ymin, ind_ymax):
                     if 0 <= pxx < hdu.data.shape[1] and 0 <= pyy < hdu.data.shape[0]:
-                        # If fitsDataType is column density, then convert to visual extinction
-                        if regionOfInterest.fitsDataType == 'HydrogenColumnDensity':
-                            extinction = hdu.data[pyy, pxx] / config.VExtinct_2_Hcol
-                        else:
-                            extinction = hdu.data[pyy, pxx]
+                        extinction = hdu.data[pyy, pxx]
                         if extinction >= 0:  # Negative extinction is not physical
                             extinction_temp.append(extinction)
                             xx, yy = wcs.wcs_pix2world(pxx, pyy, 0)

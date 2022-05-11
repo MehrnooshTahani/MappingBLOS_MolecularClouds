@@ -10,8 +10,8 @@ from astropy.io import fits
 import matplotlib.pyplot as plt
 from Classes.RegionOfInterest import Region
 from Classes.CalculateB import CalculateB
-
-
+import Classes.config as config
+import math
 # -------- FUNCTION DEFINITION --------
 def B2RGB(b):
     """
@@ -26,7 +26,7 @@ def B2RGB(b):
     for item in b:
         if abs(item) < 1000:
             s.append(abs(item) / 2)
-        if abs(item) >= 1000:
+        elif abs(item) >= 1000:
             s.append(1000 / 2)
 
         alpha = 1  # Optional: set the transparency
@@ -43,31 +43,17 @@ def B2RGB(b):
 
 
 # -------- CHOOSE THE REGION OF INTEREST --------
-cloudName = input("Enter the name of the region of interest: ")
-cloudName = cloudName.capitalize()  # Ensure only the first letter is capitalized
+#cloudName = input("Enter the name of the region of interest: ")
+#cloudName = cloudName.capitalize()  # Ensure only the first letter is capitalized
+cloudName = config.cloud
 regionOfInterest = Region(cloudName)
 # -------- CHOOSE THE REGION OF INTEREST. --------
 
 # -------- DEFINE FILES AND PATHS --------
-#Directory name fragments
-currentDir = os.path.abspath(os.getcwd())
-fileOutputFragment = 'FileOutput/'
-refPointsFragment = '/RefPoints'
-matchedRMExtinctionFragment = '/MatchedRMExtinction'
-BLOSPointsFragment = '/BLOSPoints'
-plotsFragment = '/Plots'
-BLOSPointMapFragment = '/BLOSPointMap'
-
-FilePath_ReferencePointsFragment = (fileOutputFragment + cloudName + refPointsFragment + cloudName + '.txt').replace('/', os.sep)
-FilePath_MatchedRMExtincFragment = (fileOutputFragment + cloudName + matchedRMExtinctionFragment + cloudName + '.txt').replace('/', os.sep)
-saveFilePath_BLOSPointsFragment = (fileOutputFragment + cloudName + BLOSPointsFragment + cloudName + '.txt').replace('/', os.sep)
-saveFigurePath_BLOSPointMapFragment = (fileOutputFragment + cloudName + plotsFragment + BLOSPointMapFragment + cloudName + '.png').replace('/', os.sep)
-
-#Processsed directory names
-FilePath_ReferencePoints = os.path.join(currentDir, FilePath_ReferencePointsFragment)
-FilePath_MatchedRMExtinc = os.path.join(currentDir, FilePath_MatchedRMExtincFragment)
-saveFilePath_BLOSPoints = os.path.join(currentDir, saveFilePath_BLOSPointsFragment)
-saveFigurePath_BLOSPointMap = os.path.join(currentDir, saveFigurePath_BLOSPointMapFragment)
+FilePath_ReferencePoints = os.path.join(config.dir_root, config.dir_fileOutput, config.cloud, config.prefix_selRefPoints + config.cloud + '.txt')
+FilePath_MatchedRMExtinc = os.path.join(config.dir_root, config.dir_fileOutput, config.cloud, config.prefix_RMExtinctionMatch + cloudName + '.txt')
+saveFilePath_BLOSPoints = os.path.join(config.dir_root, config.dir_fileOutput, config.cloud, config.prefix_BLOSPointData + config.cloud + '.txt')
+saveFigurePath_BLOSPointMap = os.path.join(config.dir_root, config.dir_fileOutput, config.cloud, config.dir_plots, config.prefix_BLOSPointFig + config.cloud + '.png')
 # -------- DEFINE FILES AND PATHS. --------
 
 # -------- LOAD REFERENCE POINT DATA --------
@@ -116,9 +102,9 @@ for i, txt in enumerate(n):
 # ---- Annotate the BLOS Points.
 
 # ---- Style the main axes and their grid
-if regionOfInterest.xmax and regionOfInterest.xmin != 'none':
+if not math.isnan(regionOfInterest.xmax) and not math.isnan(regionOfInterest.xmin):
     ax.set_xlim(regionOfInterest.xmin, regionOfInterest.xmax)
-if regionOfInterest.ymax and regionOfInterest.ymin != 'none':
+if not math.isnan(regionOfInterest.ymax) and not math.isnan(regionOfInterest.ymin):
     ax.set_ylim(regionOfInterest.ymin, regionOfInterest.ymax)
 
 ra = ax.coords[0]

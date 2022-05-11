@@ -7,29 +7,19 @@ from Classes.CalculateB import CalculateB
 import os
 from MolecularClouds.Classes.RegionOfInterest import Region
 import pandas as pd
+import Classes.config as config
 
 # -------- CHOOSE THE REGION OF INTEREST --------
-cloudName = input("Enter the name of the region of interest: ")
-cloudName = cloudName.capitalize()  # Ensure only the first letter is capitalized
+#cloudName = input("Enter the name of the region of interest: ")
+#cloudName = cloudName.capitalize()  # Ensure only the first letter is capitalized
+cloudName = config.cloud
 regionOfInterest = Region(cloudName)
 # -------- CHOOSE THE REGION OF INTEREST. --------
 
 # -------- DEFINE FILES AND PATHS --------
-#Directory name fragments
-currentDir = os.path.abspath(os.getcwd())
-fileOutputFragment = 'FileOutput/'
-matchedRMExtinctionFragment = '/MatchedRMExtinction'
-refPointsFragment = '/RefPoints'
-densitySensitivityFragment = '/DensitySensitivity/'
-
-MatchedRMExtincPathFragment = (fileOutputFragment + cloudName + matchedRMExtinctionFragment + cloudName + '.txt').replace('/', os.sep)
-RefPointPathFragment = (fileOutputFragment + cloudName + refPointsFragment + cloudName + '.txt').replace('/', os.sep)
-saveFileDirFragment = (fileOutputFragment + cloudName + densitySensitivityFragment).replace('/', os.sep)
-
-#Processsed directory names
-MatchedRMExtincPath = os.path.join(currentDir, MatchedRMExtincPathFragment)
-RefPointPath = os.path.join(currentDir, RefPointPathFragment)
-saveFileDir = os.path.join(currentDir, saveFileDirFragment)
+MatchedRMExtincPath = os.path.join(config.dir_root, config.dir_fileOutput, config.cloud, config.prefix_RMExtinctionMatch + config.cloud + '.txt')
+RefPointPath = os.path.join(config.dir_root, config.dir_fileOutput, config.cloud, config.prefix_selRefPoints + config.cloud + '.txt')
+saveFileDir = os.path.join(config.dir_root, config.dir_fileOutput, config.cloud, config.dir_densitySensitivity)
 # -------- DEFINE FILES AND PATHS. --------
 
 # -------- READ REFERENCE POINT TABLE --------
@@ -45,8 +35,8 @@ percent = ['-{}'.format(i) for i in p[::-1]] + ['0'] + ['+{}'.format(i) for i in
 
 for value in percent:
     AvAbundanceName = 'Av_T0_n' + value
-    AvAbundancePath = regionOfInterest.AvFileDir + AvAbundanceName + '.out'
-    saveFilePath = saveFileDir + 'B_' + AvAbundanceName + '.txt'
+    AvAbundancePath = regionOfInterest.AvFileDir + os.sep + AvAbundanceName + '.out'
+    saveFilePath = saveFileDir + os.sep + 'B_' + AvAbundanceName + '.txt'
     B = CalculateB(AvAbundancePath, MatchedRMExtincPath, refPointTable, saveFilePath)
 
 print('Saving calculated magnetic field values in the folder: '+saveFileDir)

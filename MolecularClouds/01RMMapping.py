@@ -10,21 +10,19 @@ from astropy.wcs import WCS
 from astropy.io import fits
 import os
 from Classes.RegionOfInterest import Region
+import Classes.config as config
+import math
 
 # -------- CHOOSE THE REGION OF INTEREST --------
-cloudName = input("Enter the name of the region of interest: ")
-cloudName = cloudName.capitalize()  # Ensure only the first letter is capitalized
+#cloudName = input("Enter the name of the region of interest: ")
+#cloudName = cloudName.capitalize()  # Ensure only the first letter is capitalized
+cloudName = config.cloud
 regionOfInterest = Region(cloudName)
 # -------- CHOOSE THE REGION OF INTEREST. --------
 
 # -------- DEFINE FILES AND PATHS --------
-#Directory name fragments
-currentDir = os.path.abspath(os.getcwd())
-saveFigurePathFragment = ('FileOutput/' + cloudName + '/Plots/' + 'RMMapping' + cloudName + '.png').replace('/', os.sep)
-RMCatalogPathFragment = ('Data/' + 'RMCatalogue.txt').replace('/', os.sep)
-#Processed directory names
-RMCatalogPath = os.path.join(currentDir, RMCatalogPathFragment)
-saveFigurePath = os.path.join(currentDir, saveFigurePathFragment)
+RMCatalogPath = os.path.join(config.dir_root, config.dir_data, config.file_RMCatalogue)
+saveFigurePath = os.path.join(config.dir_root, config.dir_fileOutput, config.cloud, config.dir_plots, config.prefix_rmMapping + config.cloud + '.png')
 # -------- DEFINE FILES AND PATHS. --------
 
 
@@ -94,9 +92,9 @@ im = plt.imshow(hdu.data, origin='lower', cmap=colourMap, interpolation='nearest
 plt.scatter(x, y, marker='o', s=size, facecolor=color, linewidth=.5, edgecolors='black')
 
 # ---- Style the main axes and their grid
-if regionOfInterest.xmax and regionOfInterest.xmin != 'none':
+if not math.isnan(regionOfInterest.xmax) and not math.isnan(regionOfInterest.xmin):
     ax.set_xlim(regionOfInterest.xmin, regionOfInterest.xmax)
-if regionOfInterest.ymax and regionOfInterest.ymin != 'none':
+if not math.isnan(regionOfInterest.ymax) and not math.isnan(regionOfInterest.ymin):
     ax.set_ylim(regionOfInterest.ymin, regionOfInterest.ymax)
 
 ra = ax.coords[0]

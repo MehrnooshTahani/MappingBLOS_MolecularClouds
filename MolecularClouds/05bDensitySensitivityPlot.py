@@ -8,28 +8,19 @@ import numpy as np
 import os
 import pandas as pd
 from MolecularClouds.Classes.RegionOfInterest import Region
+import Classes.config as config
 
 # -------- CHOOSE THE REGION OF INTEREST --------
-cloudName = input("Enter the name of the region of interest: ")
-cloudName = cloudName.capitalize()  # Ensure only the first letter is capitalized
+#cloudName = input("Enter the name of the region of interest: ")
+#cloudName = cloudName.capitalize()  # Ensure only the first letter is capitalized
+cloudName = config.cloud
 regionOfInterest = Region(cloudName)
 # -------- CHOOSE THE REGION OF INTEREST. --------
 
 # -------- DEFINE FILES AND PATHS --------
-#Directory name fragments
-currentDir = os.path.abspath(os.getcwd())
-fileOutputFragment = 'FileOutput/'
-densitySensitivityFragment = '/DensitySensitivity/'
-plotsFragment = '/Plots/'
-
-BScaledFileDirFragment = (fileOutputFragment + cloudName + densitySensitivityFragment).replace('/', os.sep)
-InitialPathFragment = (fileOutputFragment + cloudName + densitySensitivityFragment + 'B_Av_T0_n0.txt').replace('/', os.sep)
-saveFigurePathFragment = (fileOutputFragment + cloudName + plotsFragment + 'BDensitySensitivity.png').replace('/', os.sep)
-
-#Processsed directory names
-BScaledFileDir = os.path.join(currentDir, BScaledFileDirFragment)
-InitialPath = os.path.join(currentDir, InitialPathFragment)
-saveFigurePath = os.path.join(currentDir, saveFigurePathFragment)
+BScaledFileDir = os.path.join(config.dir_root, config.dir_fileOutput, config.cloud, config.dir_densitySensitivity)
+InitialPath = os.path.join(config.dir_root, config.dir_fileOutput, config.cloud, config.dir_densitySensitivity, 'B_Av_T0_n0.txt')
+saveFigurePath = os.path.join(config.dir_root, config.dir_fileOutput, config.cloud, config.dir_plots, 'BDensitySensitivity.png')
 # -------- DEFINE FILES AND PATHS. --------
 
 # -------- EXTRACT ORIGINAL BLOS VALUES --------
@@ -46,7 +37,7 @@ AllBScaled = np.zeros([len(B), len(percent)])
 
 for i, value in enumerate(percent):
     AvAbundanceName = 'Av_T0_n' + value
-    BScaledFilePath = BScaledFileDir + 'B_' + AvAbundanceName + '.txt'
+    BScaledFilePath = BScaledFileDir + os.sep + 'B_' + AvAbundanceName + '.txt'
     BScaledTemp = list(pd.read_csv(BScaledFilePath)['Magnetic_Field(uG)'])
     AllBScaled[:, i] = BScaledTemp[:]
 # -------- EXTRACT BLOS FOR EACH PERCENT OF THE INPUT DENSITY. -------

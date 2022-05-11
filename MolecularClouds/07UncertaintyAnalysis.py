@@ -4,7 +4,7 @@ This is the seventh stage of the BLOSMapping method where the uncertainties in t
 import os
 import pandas as pd
 from Classes.RegionOfInterest import Region
-
+import Classes.config as config
 
 # -------- FUNCTION DEFINITION --------
 def extinctionChemUncertainties(B, BHigher, BLower):
@@ -26,34 +26,19 @@ def extinctionChemUncertainties(B, BHigher, BLower):
 
 
 # -------- CHOOSE THE REGION OF INTEREST --------
-cloudName = input("Enter the name of the region of interest: ")
-cloudName = cloudName.capitalize()  # Ensure only the first letter is capitalized
+#cloudName = input("Enter the name of the region of interest: ")
+#cloudName = cloudName.capitalize()  # Ensure only the first letter is capitalized
+cloudName = config.cloud
 regionOfInterest = Region(cloudName)
 # -------- CHOOSE THE REGION OF INTEREST. --------
 
 # -------- DEFINE FILES AND PATHS --------
-#Directory name fragments
-currentDir = os.path.abspath(os.getcwd())
-fileOutputFragment = 'FileOutput/'
-BLOSPointsFragment = '/BLOSPoints'
-DensitySensitivityFragment = '/DensitySensitivity/'
-TemperatureSensitivityFragment = '/TemperatureSensitivity/'
-FinalBLOSResultsFragment = '/FinalBLOSResults'
-
-BFilePathFragment = (fileOutputFragment + cloudName + BLOSPointsFragment + cloudName + '.txt').replace('/', os.sep)
-BData_Density50IncreasePathFragment = (fileOutputFragment + cloudName + DensitySensitivityFragment + 'B_Av_T0_n+50.txt').replace('/', os.sep)
-BData_Density50DecreasePathFragment = (fileOutputFragment + cloudName + DensitySensitivityFragment + 'B_Av_T0_n-50.txt').replace('/', os.sep)
-BData_Temp20IncreasePathFragment = (fileOutputFragment + cloudName + TemperatureSensitivityFragment + 'B_Av_T+20_n0.txt').replace('/', os.sep)
-BData_Temp20DecreasePathFragment = (fileOutputFragment + cloudName + TemperatureSensitivityFragment + 'B_Av_T-20_n0.txt').replace('/', os.sep)
-saveFilePathFragment = (fileOutputFragment + cloudName + FinalBLOSResultsFragment + cloudName + '.txt').replace('/', os.sep)
-
-#Processed directory names
-BFilePath = os.path.join(currentDir, BFilePathFragment)
-BData_Density50IncreasePath = os.path.join(currentDir, BData_Density50IncreasePathFragment)
-BData_Density50DecreasePath = os.path.join(currentDir, BData_Density50DecreasePathFragment)
-BData_Temp20IncreasePath = os.path.join(currentDir, BData_Temp20IncreasePathFragment)
-BData_Temp20DecreasePath = os.path.join(currentDir, BData_Temp20DecreasePathFragment)
-saveFilePath = os.path.join(currentDir, saveFilePathFragment)
+BFilePath = os.path.join(config.dir_root, config.dir_fileOutput, config.cloud, config.prefix_BLOSPointData + config.cloud + '.txt')
+BData_Density50IncreasePath = os.path.join(config.dir_root, config.dir_fileOutput, config.cloud, config.dir_densitySensitivity, 'B_Av_T0_n+50.txt')
+BData_Density50DecreasePath = os.path.join(config.dir_root, config.dir_fileOutput, config.cloud, config.dir_densitySensitivity, 'B_Av_T0_n-50.txt')
+BData_Temp20IncreasePath = os.path.join(config.dir_root, config.dir_fileOutput, config.cloud, config.dir_temperatureSensitivity, 'B_Av_T+20_n0.txt')
+BData_Temp20DecreasePath = os.path.join(config.dir_root, config.dir_fileOutput, config.cloud, config.dir_temperatureSensitivity, 'B_Av_T-20_n0.txt')
+saveFilePath = os.path.join(config.dir_root, config.dir_fileOutput, config.cloud, config.prefix_BLOSUncertainty + cloudName + '.txt')
 # -------- DEFINE FILES AND PATHS --------
 
 # -------- READ BLOS DATA--------

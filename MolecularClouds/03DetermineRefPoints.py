@@ -13,43 +13,28 @@ from Classes.FindAllPotentialRefPoints import FindAllPotentialReferencePoints
 from Classes.FindOptimalRefPoints import FindOptimalRefPoints
 import adjustText
 from Classes.CalculateB import CalculateB
+import Classes.config as config
 
 # -------- CHOOSE THE REGION OF INTEREST --------
-cloudName = input("Enter the name of the region of interest: ")
-cloudName = cloudName.capitalize()  # Ensure only the first letter is capitalized
+#cloudName = input("Enter the name of the region of interest: ")
+#cloudName = cloudName.capitalize()  # Ensure only the first letter is capitalized
+cloudName = config.cloud
 regionOfInterest = Region(cloudName)
 # -------- CHOOSE THE REGION OF INTEREST. --------
 
 # -------- DEFINE FILES AND PATHS --------
-#Directory name fragments
-currentDir = os.path.abspath(os.getcwd())
-fileOutputFragment = 'FileOutput/'
-allPotentialRefPointsFragment = '/AllPotentialRefPoints'
-refPointsFragment = '/RefPoints'
-refDataFragment = '/ReferenceData'
-plotsFragment = '/Plots/'
-matchedRMExtinctionFragment = '/MatchedRMExtinction'
+saveFilePath_ALlPotentialRefPoints = os.path.join(config.dir_root, config.dir_fileOutput, config.cloud, config.prefix_allPotRefPoints + config.cloud + '.txt')
+saveFilePath_ReferencePoints = os.path.join(config.dir_root, config.dir_fileOutput, config.cloud, config.prefix_selRefPoints + config.cloud + '.txt')
+saveFilePath_ReferenceData = os.path.join(config.dir_root, config.dir_fileOutput, config.cloud, config.prefix_refData + config.cloud + '.txt')
 
-saveFilePath_AllPotentialRefPointsFragment = \
-    (fileOutputFragment + cloudName + allPotentialRefPointsFragment + cloudName + '.txt').replace('/', os.sep)
-saveFilePath_ReferencePointsFragment = \
-    (fileOutputFragment + cloudName + refPointsFragment + cloudName + '.txt').replace('/', os.sep)
-saveFilePath_ReferenceDataFragment = \
-    (fileOutputFragment + cloudName + refDataFragment + cloudName + '.txt').replace('/', os.sep)
-saveFigurePath_BLOSvsNRef_AllPotentialRefPointsFragment = \
-    (fileOutputFragment + cloudName + plotsFragment + 'BLOS_vs_NRef_AllPotentialRefPoints.png').replace('/', os.sep)
-saveFigurePath_BLOSvsNRef_ChosenPotentialRefPointsFragment = \
-    (fileOutputFragment + cloudName + plotsFragment + 'BLOS_vs_NRef_ChosenRefPoints.png').replace('/', os.sep)
-saveFigureDir_RefPointMapFragment = \
-    (fileOutputFragment + cloudName + plotsFragment).replace('/', os.sep)
+saveFigurePath_BLOSvsNRef_AllPotentialRefPoints = os.path.join(config.dir_root, config.dir_fileOutput, config.cloud, config.dir_plots, 'BLOS_vs_NRef_AllPotentialRefPoints.png')
+saveFigurePath_BLOSvsNRef_ChosenPotentialRefPoints = os.path.join(config.dir_root, config.dir_fileOutput, config.cloud, config.dir_plots, 'BLOS_vs_NRef_ChosenRefPoints.png')
+saveFigureDir_RefPointMap = os.path.join(config.dir_root, config.dir_fileOutput, config.cloud, config.dir_plots)
 
-#Processsed directory names
-saveFilePath_ALlPotentialRefPoints = os.path.join(currentDir, saveFilePath_AllPotentialRefPointsFragment)
-saveFilePath_ReferencePoints = os.path.join(currentDir, saveFilePath_ReferencePointsFragment)
-saveFilePath_ReferenceData = os.path.join(currentDir, saveFilePath_ReferenceDataFragment)
-saveFigurePath_BLOSvsNRef_AllPotentialRefPoints = os.path.join(currentDir, saveFigurePath_BLOSvsNRef_AllPotentialRefPointsFragment)
-saveFigurePath_BLOSvsNRef_ChosenPotentialRefPoints = os.path.join(currentDir, saveFigurePath_BLOSvsNRef_ChosenPotentialRefPointsFragment)
-saveFigureDir_RefPointMap = os.path.join(currentDir, saveFigureDir_RefPointMapFragment)
+# -------- Load matched rm and extinction data
+MatchedRMExtincPath = os.path.join(config.dir_root, config.dir_fileOutput, config.cloud, config.prefix_RMExtinctionMatch + config.cloud + '.txt')
+# -------- Load matched rm and extinction data.
+
 # -------- DEFINE FILES AND PATHS. --------
 
 # -------- READ FITS FILE --------
@@ -63,12 +48,12 @@ print('\n---------------------')
 
 print('All potential reference points will be taken to be all points with a visual extinction value less than the '
       'extinction threshold.')
-if abs(regionOfInterest.cloudLatitude) < 15:
-    Av_threshold = 2
+if abs(regionOfInterest.cloudLatitude) < config.offDiskLatitude:
+    Av_threshold = config.onDiskAvThresh
     print('\t-For clouds that appear near the disk, such as {}, an appropriate threshold value is {}.'
           .format(cloudName, Av_threshold))
 else:
-    Av_threshold = 1
+    Av_threshold = config.offDiskAvThresh
     print('\t-For clouds that appear off the disk, such as {}, an appropriate threshold value is {}.'
           .format(cloudName, Av_threshold))
 
@@ -121,9 +106,9 @@ adjustText.adjust_text(text)
 # ---- Annotate the chosen reference points
 
 # ---- Style the main axes and their grid
-if regionOfInterest.xmax and regionOfInterest.xmin != 'none':
+if not math.isnan(regionOfInterest.xmax) and not math.isnan(regionOfInterest.xmin):
     ax.set_xlim(regionOfInterest.xmin, regionOfInterest.xmax)
-if regionOfInterest.ymax and regionOfInterest.ymin != 'none':
+if not math.isnan(regionOfInterest.ymax) and not math.isnan(regionOfInterest.ymin):
     ax.set_ylim(regionOfInterest.ymin, regionOfInterest.ymax)
 
 ra = ax.coords[0]
@@ -165,7 +150,7 @@ elif regionOfInterest.fitsDataType == 'VisualExtinction':
 # ---- Style the colour bar.
 
 # ---- Display or save the figure
-saveFigurePath_RefPointMap = saveFigureDir_RefPointMap + 'RefPointMap_AllPotentialRefPoints.png'
+saveFigurePath_RefPointMap = saveFigureDir_RefPointMap + os.sep + 'RefPointMap_AllPotentialRefPoints.png'
 plt.savefig(saveFigurePath_RefPointMap)
 plt.show()
 plt.close()
@@ -213,18 +198,18 @@ print('We will now check if any of the potential reference points are near a reg
 # -------- Define the range
 # The distance the point can be from a region of high extinction and still be thought to sample the background
 cloudDistance = regionOfInterest.distance  # [pc]
-cloudJeansLength = 1.  # [pc] CHECK THIS
+cloudJeansLength = config.cloudJeansLength  # [pc]
 minDiff = cloudJeansLength / cloudDistance  # [deg]
 
 minDiff_pix = minDiff / abs(hdu.header['CDELT1'])
-NDelt = 5 * math.ceil(minDiff_pix)  # Round up
+NDelt = config.pixelCheckMultiplier * math.ceil(minDiff_pix)  # Round up
 chooseNDelt = input("\t-Would you like the define a region around the given point to the suggested {} pixels? (y/n)".
                     format(NDelt))
 if chooseNDelt == 'n':
     NDelt = int(float(input('\tPlease enter the value you would like to use instead: ')))
 
 # Choose the minimum extinction value which you want to correspond to an "on" position
-highExtinctionThreshold = 5 * Av_threshold
+highExtinctionThreshold = config.highExtinctionThreshMultiplier * Av_threshold
 
 chooseHighAvThreshold = input("\t-Would you like to define a region of high extinction to the suggested Av={}? (y/n)".
                               format(highExtinctionThreshold))
@@ -263,7 +248,7 @@ if len(nearHighExtinctionRegion) != 0:
     print('The potential reference point(s) {} are near a region of high extinction'.format(nearHighExtinctionRegion))
 
 else:
-    print('Based on the specified range and definition of high extinction, the none of the potential reference points'
+    print('Based on the specified range and definition of high extinction, none of the potential reference points'
           ' are near a region of high extinction')
 print('---------------------\n')
 # -------- CHECK TO SEE IF ANY POTENTIAL POINTS ARE NEAR A REGION OF HIGH EXTINCTION. --------
@@ -275,23 +260,23 @@ print('We will now check if any of the potential reference points have anomalous
 
 # -------- Define "anomalous"
 # Load and unpack all the rotation measure data for the region of interest
-currentDir = os.path.abspath(os.getcwd())
-MatchedRMExtincPath = os.path.join(currentDir, (fileOutputFragment + cloudName + matchedRMExtinctionFragment
-                                   + cloudName + '.txt').replace('/', os.sep))
+##
 matchedRMExtinctionData = pd.read_csv(MatchedRMExtincPath, sep='\t')
 
 # Choose a rotation measure corresponding to anomalous
 rm_avg = np.mean(matchedRMExtinctionData['Rotation_Measure(rad/m2)'])
 rm_std = np.std(matchedRMExtinctionData['Rotation_Measure(rad/m2)'])
 
-coeff = 3
-rm_upperLimit = rm_avg + coeff * rm_std
-rm_lowerLimit = rm_avg - coeff * rm_std
+coeffSTD = config.anomalousSTDNum
+rm_upperLimit = rm_avg + coeffSTD * rm_std
+rm_lowerLimit = rm_avg - coeffSTD * rm_std
 chooseAnomalousRMThreshold = input("\t-Would you like to define anomalous rotation measure values to be greater or less"
                                    " than the the suggested {} standard deviations from the mean (rm < {:.2f}rad/m^2 or"
-                                   " rm > {:.2f}rad/m^2)? (y/n)".format(coeff, rm_lowerLimit, rm_upperLimit))
+                                   " rm > {:.2f}rad/m^2)? (y/n)".format(coeffSTD, rm_lowerLimit, rm_upperLimit))
 if chooseAnomalousRMThreshold == 'n':
-    anomalousRMThreshold = float(input('\tPlease enter the value you would like to use instead: '))
+    coeffSTD = float(input('\tPlease enter the number of standard deviations you would like to use instead: '))
+    rm_upperLimit = rm_avg + coeffSTD * rm_std
+    rm_lowerLimit = rm_avg - coeffSTD * rm_std
 # -------- Define "anomalous".
 
 # -------- For each potential reference point
@@ -322,10 +307,6 @@ print(chosenRefPoints)
 # -------- ASK THE USER WHICH POINTS THEY WANT TO USE AS REFERENCE POINTS. --------
 
 # -------- REASSESS STABILITY --------
-# -------- Load matched rm and extinction data
-MatchedRMExtincPath = os.path.join(currentDir, (fileOutputFragment + cloudName + matchedRMExtinctionFragment
-                                   + cloudName + '.txt').replace('/', os.sep))
-# -------- Load matched rm and extinction data.
 '''
 We are going to start the plot off with all of the chosen reference points
  - which are in order of increasing extinction.  They may have jumps but this is okay

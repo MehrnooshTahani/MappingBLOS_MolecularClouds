@@ -9,7 +9,7 @@ import os
 from .CalculateB import CalculateB
 from .RegionOfInterest import Region
 from statistics import mode
-
+import MolecularClouds.Classes.config as config
 
 # -------- CLASS DEFINITION --------
 class FindOptimalRefPoints:
@@ -26,8 +26,7 @@ class FindOptimalRefPoints:
 
         # -------- LOAD AND UNPACK MATCHED RM AND EXTINCTION DATA --------
         currentDir = os.path.abspath(os.getcwd())
-        MatchedRMExtincPath = os.path.join(currentDir, 'FileOutput/'.replace('/', os.sep) + cloudName + '/MatchedRMExtinction'.replace('/', os.sep)
-                                           + cloudName + '.txt')
+        MatchedRMExtincPath = os.path.join(config.dir_root, config.dir_fileOutput, config.cloud, config.prefix_RMExtinctionMatch + config.cloud + '.txt')
         matchedRMExtinctionData = pd.read_csv(MatchedRMExtincPath, sep='\t')
         # -------- LOAD AND UNPACK MATCHED RM AND EXTINCTION DATA. --------
 
@@ -67,7 +66,7 @@ class FindOptimalRefPoints:
         Identifiers = list(DataNoRef.index)
         DataNoRef = DataNoRef.reset_index(drop=True)
 
-        DataNoRef.to_csv(currentDir + '/FileOutput/DataNoRef'.replace('/', os.sep) + cloudName + '.txt')
+        DataNoRef.to_csv(os.path.join(config.dir_root, config.dir_fileOutput, config.prefix_OptRefPoints + config.cloud + '.txt'))
 
         # -------- CREATE A FIGURE --------
         plt.figure(figsize=(6, 4), dpi=120, facecolor='w', edgecolor='k')
