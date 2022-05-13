@@ -93,7 +93,7 @@ class CalculateB:
             '''We want to find the layer that is closest in value and greater than the half the scaled 
              extinction value. Since Av is a list ordered from least to greatest, this corresponds to the first location 
              where Av is greater than half the scaled extinction value 
-             '''
+            '''
 
             ind = np.where(Av >= self.BLOSData['Scaled_Extinction'][i] / 2)[0][0]
             #print(i) #debug

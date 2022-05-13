@@ -16,9 +16,9 @@ from Classes.RegionOfInterest import Region
 import Classes.config as config
 
 # -------- CHOOSE THE REGION OF INTEREST --------
-#cloudName = input("Enter the name of the region of interest: ")
-#cloudName = cloudName.capitalize()  # Ensure only the first letter is capitalized
-cloudName = config.cloud
+cloudName = input("Enter the name of the region of interest: ")
+cloudName = cloudName.capitalize()  # Ensure only the first letter is capitalized
+#cloudName = config.cloud
 regionOfInterest = Region(cloudName)
 # -------- CHOOSE THE REGION OF INTEREST. --------
 
@@ -43,7 +43,7 @@ rmData = DataFile(RMCatalogPath, regionOfInterest.raHoursMax, regionOfInterest.r
 # -------- DEFINE THE ERROR RANGE --------
 # The physical limit on how far an extinction value can be from the rm and still be considered valid/applicable
 cloudDistance = regionOfInterest.distance  # [pc]
-cloudJeansLength = config.cloudJeansLength  # [pc]
+cloudJeansLength = config.cloudJeansLength  # [pc] Mehrnoosh Check this
 minDiff = cloudJeansLength / cloudDistance  # [deg]
 
 minDiff_pix = minDiff / abs(hdu.header['CDELT1'])
@@ -117,7 +117,7 @@ for index in range(len(rmData.targetRotationMeasures)):
                             # If fitsDataType is column density, then convert to visual extinction
                             extinctionPixel = hdu.data[pyy, pxx]
                             surrondingExtinction.append(extinctionPixel)
-                extinction = np.avg(surrondingExtinction)
+                extinction = np.average(surrondingExtinction)
             # ---- Negative extinction.
 
             Identifier.append(cntr)

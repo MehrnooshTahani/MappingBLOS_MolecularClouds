@@ -16,9 +16,9 @@ from Classes.CalculateB import CalculateB
 import Classes.config as config
 
 # -------- CHOOSE THE REGION OF INTEREST --------
-#cloudName = input("Enter the name of the region of interest: ")
-#cloudName = cloudName.capitalize()  # Ensure only the first letter is capitalized
-cloudName = config.cloud
+cloudName = input("Enter the name of the region of interest: ")
+cloudName = cloudName.capitalize()  # Ensure only the first letter is capitalized
+#cloudName = config.cloud
 regionOfInterest = Region(cloudName)
 # -------- CHOOSE THE REGION OF INTEREST. --------
 
@@ -198,7 +198,7 @@ print('We will now check if any of the potential reference points are near a reg
 # -------- Define the range
 # The distance the point can be from a region of high extinction and still be thought to sample the background
 cloudDistance = regionOfInterest.distance  # [pc]
-cloudJeansLength = config.cloudJeansLength  # [pc]
+cloudJeansLength = config.cloudJeansLength  # [pc] Mehrnoosh Check this
 minDiff = cloudJeansLength / cloudDistance  # [deg]
 
 minDiff_pix = minDiff / abs(hdu.header['CDELT1'])
@@ -233,14 +233,14 @@ for i in range(len(AllPotenitalRefPoints.AllRefPoints)):
 
     # ---- Cycle through extinction values within the range
     # If an extinction value within this range is too high, then it cannot be considered as a reference point
-    highExtinction = 0
+    highExtinction = False
     for pxx in range(ind_xmin, ind_xmax):
         for pyy in range(ind_ymin, ind_ymax):
             if 0 <= pxx < hdu.data.shape[1] and 0 <= pyy < hdu.data.shape[0]:
                 extinction_val = hdu.data[pyy, pxx]
                 if extinction_val > highExtinctionThreshold:
-                    highExtinction = 1
-    if highExtinction == 1:
+                    highExtinction = False
+    if highExtinction == True:
         nearHighExtinctionRegion.append(i + 1)  # To identify points numbered in order of increasing extinction
     # ---- Cycle through extinction values within the range.
 # -------- For each potential reference point.

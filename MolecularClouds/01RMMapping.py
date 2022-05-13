@@ -14,9 +14,9 @@ import Classes.config as config
 import math
 
 # -------- CHOOSE THE REGION OF INTEREST --------
-#cloudName = input("Enter the name of the region of interest: ")
-#cloudName = cloudName.capitalize()  # Ensure only the first letter is capitalized
-cloudName = config.cloud
+cloudName = input("Enter the name of the region of interest: ")
+cloudName = cloudName.capitalize()  # Ensure only the first letter is capitalized
+#cloudName = config.cloud
 regionOfInterest = Region(cloudName)
 # -------- CHOOSE THE REGION OF INTEREST. --------
 

@@ -25,7 +25,6 @@ class FindAllPotentialReferencePoints:
         """
 
         # -------- LOAD AND UNPACK MATCHED RM AND EXTINCTION DATA --------
-        currentDir = os.path.abspath(os.getcwd())
         MatchedRMExtincPath = os.path.join(config.dir_root, config.dir_fileOutput, config.cloud, config.prefix_RMExtinctionMatch + cloudName + '.txt')
         matchedRMExtinctionData = pd.read_csv(MatchedRMExtincPath, sep='\t')
         # -------- LOAD AND UNPACK MATCHED RM AND EXTINCTION DATA. --------
@@ -41,7 +40,7 @@ class FindAllPotentialReferencePoints:
         # Indices where the extinction is less than the threshold:
         ind_extinction = np.where(matchedRMExtinctionData['Extinction_Value'] <= threshold)[0]
 
-        # All potential reference points are all reference points with extinction less than one:
+        # All potential reference points are all reference points with extinction less than the threshold:
         self.AllRefPoints = matchedRMExtinctionData.loc[ind_extinction].sort_values('Extinction_Value',
                                                                                     ignore_index=True)
         # ---- Criterion: Av < threshold.

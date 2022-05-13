@@ -25,7 +25,6 @@ class FindOptimalRefPoints:
         regionOfInterest = Region(cloudName)
 
         # -------- LOAD AND UNPACK MATCHED RM AND EXTINCTION DATA --------
-        currentDir = os.path.abspath(os.getcwd())
         MatchedRMExtincPath = os.path.join(config.dir_root, config.dir_fileOutput, config.cloud, config.prefix_RMExtinctionMatch + config.cloud + '.txt')
         matchedRMExtinctionData = pd.read_csv(MatchedRMExtincPath, sep='\t')
         # -------- LOAD AND UNPACK MATCHED RM AND EXTINCTION DATA. --------
