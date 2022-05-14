@@ -55,10 +55,7 @@ else:
     print('\t-For clouds that appear off the disk, such as {}, an appropriate threshold value is {}.'
           .format(cloudName, Av_threshold))
 
-chooseAvThreshold = input("Given this information, would you like to set the threshold extinction to the suggested {}? "
-                          "(y/n)".format(Av_threshold))
-if chooseAvThreshold == 'n':
-    Av_threshold = float(input('Please enter the threshold extinction you would like to use instead: '))
+print("Given this information, the threshold extinction has been set to the suggested {}".format(Av_threshold))
 # -------- CHOOSE THE THRESHOLD EXTINCTION. --------
 
 # -------- FIND ALL POTENTIAL REFERENCE POINTS --------
@@ -201,18 +198,12 @@ minDiff = cloudJeansLength / cloudDistance  # [deg]
 
 minDiff_pix = minDiff / abs(hdu.header['CDELT1'])
 NDelt = config.pixelCheckMultiplier * math.ceil(minDiff_pix)  # Round up
-chooseNDelt = input("\t-Would you like the define a region around the given point to the suggested {} pixels? (y/n)".
-                    format(NDelt))
-if chooseNDelt == 'n':
-    NDelt = int(float(input('\tPlease enter the value you would like to use instead: ')))
+print("\t-A region around the point has been defined to the suggested {} pixels".format(NDelt))
 
 # Choose the minimum extinction value which you want to correspond to an "on" position
 highExtinctionThreshold = config.highExtinctionThreshMultiplier * Av_threshold
+print("\t-A region of high extinction has been defined to the suggested suggested Av={}? (y/n)".format(highExtinctionThreshold))
 
-chooseHighAvThreshold = input("\t-Would you like to define a region of high extinction to the suggested Av={}? (y/n)".
-                              format(highExtinctionThreshold))
-if chooseHighAvThreshold == 'n':
-    highExtinctionThreshold = float(input('\tPlease enter the value you would like to use instead: '))
 # -------- Define the range.
 
 # -------- For each potential reference point
@@ -268,13 +259,9 @@ rm_std = np.std(matchedRMExtinctionData['Rotation_Measure(rad/m2)'])
 coeffSTD = config.anomalousSTDNum
 rm_upperLimit = rm_avg + coeffSTD * rm_std
 rm_lowerLimit = rm_avg - coeffSTD * rm_std
-chooseAnomalousRMThreshold = input("\t-Would you like to define anomalous rotation measure values to be greater or less"
+print("\t-Anomalous rotation measure values have been defined to be greater or less"
                                    " than the the suggested {} standard deviations from the mean (rm < {:.2f}rad/m^2 or"
-                                   " rm > {:.2f}rad/m^2)? (y/n)".format(coeffSTD, rm_lowerLimit, rm_upperLimit))
-if chooseAnomalousRMThreshold == 'n':
-    coeffSTD = float(input('\tPlease enter the number of standard deviations you would like to use instead: '))
-    rm_upperLimit = rm_avg + coeffSTD * rm_std
-    rm_lowerLimit = rm_avg - coeffSTD * rm_std
+                                   " rm > {:.2f}rad/m^2)".format(coeffSTD, rm_lowerLimit, rm_upperLimit))
 # -------- Define "anomalous".
 
 # -------- For each potential reference point
