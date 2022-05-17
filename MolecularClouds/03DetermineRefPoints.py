@@ -228,7 +228,7 @@ for i in range(len(AllPotenitalRefPoints.AllRefPoints)):
             if 0 <= pxx < hdu.data.shape[1] and 0 <= pyy < hdu.data.shape[0]:
                 extinction_val = hdu.data[pyy, pxx]
                 if extinction_val > highExtinctionThreshold:
-                    highExtinction = False
+                    highExtinction = True
     if highExtinction == True:
         nearHighExtinctionRegion.append(i + 1)  # To identify points numbered in order of increasing extinction
     # ---- Cycle through extinction values within the range.
