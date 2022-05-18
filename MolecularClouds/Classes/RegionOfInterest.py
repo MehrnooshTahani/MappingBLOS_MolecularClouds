@@ -37,16 +37,18 @@ import os
 from sys import exit
 from configparser import ConfigParser
 import MolecularClouds.Classes.config as config
-'''
-currentDir = os.path.abspath(os.getcwd())
-'''
+
 class Region:
     def __init__(self, regionName):
 
         cloudParams = ConfigParser()
         regionDataFileLoc = os.path.join(config.dir_root, config.dir_data, config.dir_cloudParameters, regionName.lower() + '.ini')
-        cloudParams.read(regionDataFileLoc)
 
+        if not os.path.exists(regionDataFileLoc):
+            print("The region file has not been found! Replace this with a better error message eventually.")
+            #Error out or read dummy data?
+
+        cloudParams.read(regionDataFileLoc)
         """ Load Region Data """
         # Distance to the region of interest:
         self.distance = cloudParams['Cloud Info'].getfloat('distance')  # CHECK THIS [pc]
@@ -76,6 +78,10 @@ class Region:
         self.raSecMin = cloudParams['Cloud Info'].getfloat('raSecMin')
         self.decDegMax = cloudParams['Cloud Info'].getfloat('decDegMax')
         self.decDegMin = cloudParams['Cloud Info'].getfloat('decDegMin')
+
+
+
+        #Old information below
         '''
         if regionName.lower() == 'aquila':
             """Parameters corresponding to the region containing the Aquila molecular cloud """
