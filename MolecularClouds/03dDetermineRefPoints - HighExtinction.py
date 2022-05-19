@@ -57,7 +57,7 @@ print('We will now check if any of the potential reference points are near a reg
 # -------- Define the range
 # The distance the point can be from a region of high extinction and still be thought to sample the background
 cloudDistance = regionOfInterest.distance  # [pc]
-cloudJeansLength = config.cloudJeansLength  # [pc]
+cloudJeansLength = regionOfInterest.jeanslength  # [pc]
 minDiff = np.degrees(np.arctan(cloudJeansLength / cloudDistance))  # [deg]
 
 minDiff_pix = minDiff / abs(hdu.header['CDELT1'])

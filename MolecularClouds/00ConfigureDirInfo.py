@@ -6,13 +6,12 @@ from configparser import ConfigParser
 configStartSettings = ConfigParser()
 configStartSettings['Cloud'] = {
     'Cloud': 'Oriona',
-    'Cloud Jeans Length': 1
     }
 configStartSettings['Judgement'] = {
     'Off Disk Latitude': 15.,
     'On Disk Extinction Threshold': 2.,
     'Off Disk Extinction Threshold': 1.,
-    'Pixel Check Range Multiplier': 5,
+    'Pixel Check Range Multiplier': 2,
     'High Extinction Threshold Multiplier': 5,
     'Anomalous Values Standard Deviation': 3.
     }
@@ -72,6 +71,7 @@ with open('configConstants.ini', 'w') as output_file:
 cloudInfoExport = ConfigParser()
 cloudInfoExport['Cloud Info'] = {
     'distance': 0,
+    'cloudJeansLength': 1,
 
     'fitsFileName': '',
     'fitsDataType': 'HydrogenColumnDensity',

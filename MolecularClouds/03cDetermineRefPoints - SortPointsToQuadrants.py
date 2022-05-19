@@ -19,6 +19,7 @@ regionOfInterest = Region(cloudName)
 
 # -------- DEFINE FILES AND PATHS --------
 saveFilePath_ALlPotentialRefPoints = os.path.join(config.dir_root, config.dir_fileOutput, config.cloud, config.prefix_allPotRefPoints + config.cloud + '.txt')
+saveFigurePath = os.path.join(config.dir_root, config.dir_fileOutput, config.cloud, config.dir_plots, config.cloud + "QuadrantDivision.png")
 # -------- DEFINE FILES AND PATHS. --------
 
 # -------- LOAD ALL POTENTIAL REFERENCE POINTS --------
@@ -165,7 +166,8 @@ elif regionOfInterest.fitsDataType == 'VisualExtinction':
 # ---- Style the colour bar.
 
 # ---- Display or save the figure
-plt.show()
+plt.savefig(saveFigurePath)
+#plt.show()
 plt.close()
 # ---- Display or save the figure.
 # -------- CREATE A FIGURE - ALL POTENTIAL REF POINTS MAP. --------

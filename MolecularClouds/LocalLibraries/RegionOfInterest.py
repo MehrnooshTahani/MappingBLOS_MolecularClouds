@@ -52,6 +52,7 @@ class Region:
         """ Load Region Data """
         # Distance to the region of interest:
         self.distance = cloudParams['Cloud Info'].getfloat('distance')  # CHECK THIS [pc]
+        self.jeanslength = cloudParams['Cloud Info'].getfloat('cloudJeansLength')
         # Path to the fits file containing to the region of interest:
         self.fitsFilePath = os.path.join(config.dir_root, config.dir_data, cloudParams['Cloud Info'].get('fitsFileName'))
         self.fitsDataType = cloudParams['Cloud Info'].get('fitsDataType')

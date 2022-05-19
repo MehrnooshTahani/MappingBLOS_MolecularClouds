@@ -17,6 +17,8 @@ from LocalLibraries.CalculateB import CalculateB
 import LocalLibraries.config as config
 import LocalLibraries.RefJudgeLib as rjl
 
+#Todo: Refactor this, don't really like it.
+
 # -------- CHOOSE THE REGION OF INTEREST --------
 cloudName = config.cloud
 regionOfInterest = Region(cloudName)
@@ -101,7 +103,7 @@ print('---------------------\n')
 # -------- ASK THE USER WHICH POINTS THEY WANT TO USE AS REFERENCE POINTS --------
 chosenRefPoints_Num = [int(item) - 1 for item in input('Please enter the numbers of the reference points you would '
                                                        'like to use as comma separated values').split(',')]
-chosenRefPoints = AllPotentialRefPoints.loc[chosenRefPoints_Num].sort_values('Extinction_Value')
+chosenRefPoints = AllPotentialRefPoints.loc[chosenRefPoints_Num].sort_values('Extinction_Value').reset_index()
 #Todo: Here's where it goes.
 print(chosenRefPoints)
 # -------- ASK THE USER WHICH POINTS THEY WANT TO USE AS REFERENCE POINTS. --------
@@ -117,7 +119,7 @@ Q1 = []
 Q2 = []
 Q3 = []
 Q4 = []
-for i in range(len(chosenRefPoints)):
+for i in range(len(chosenRefPoints.reset_index())):
     idNum = chosenRefPoints['ID#'][i]
     px = chosenRefPoints['Extinction_Index_x'][i]
     py = chosenRefPoints['Extinction_Index_y'][i]
@@ -138,11 +140,20 @@ for i in range(len(chosenRefPoints)):
 # -------- SORT REF POINTS INTO THESE REGIONS. --------
 
 # -------- OUTPUT RESULTS. --------
+'''
 print("The potential reference points, sorted by quadrant, are:")
 print("Q1: {}".format(Q1))
 print("Q2: {}".format(Q2))
 print("Q3: {}".format(Q3))
 print("Q4: {}".format(Q4))
+'''
+minSamples = 2
+quadrantsUndersampled = 0
+quadrantsUndersampled = quadrantsUndersampled + 1 if len(Q1) < minSamples else quadrantsUndersampled
+quadrantsUndersampled = quadrantsUndersampled + 1 if len(Q2) < minSamples else quadrantsUndersampled
+quadrantsUndersampled = quadrantsUndersampled + 1 if len(Q3) < minSamples else quadrantsUndersampled
+quadrantsUndersampled = quadrantsUndersampled + 1 if len(Q4) < minSamples else quadrantsUndersampled
+print("Warning: {} quadrants have less than {} points sampled!".format(quadrantsUndersampled, minSamples))
 # -------- OUTPUT RESULTS. --------
 
 # -------- REASSESS STABILITY --------

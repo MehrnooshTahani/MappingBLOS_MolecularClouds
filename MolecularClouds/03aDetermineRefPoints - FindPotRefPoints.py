@@ -3,9 +3,6 @@ This is the third stage of the BLOSMapping method where the reference points are
 """
 import os
 
-from astropy.wcs import WCS
-from astropy.io import fits
-
 import LocalLibraries.config as config
 from LocalLibraries.RegionOfInterest import Region
 
@@ -22,27 +19,11 @@ saveFilePath_ALlPotentialRefPoints = os.path.join(config.dir_root, config.dir_fi
 MatchedRMExtincPath = os.path.join(config.dir_root, config.dir_fileOutput, config.cloud, config.prefix_RMExtinctionMatch + config.cloud + '.txt')
 # -------- DEFINE FILES AND PATHS. --------
 
-# -------- READ FITS FILE --------
-hdulist = fits.open(regionOfInterest.fitsFilePath)
-hdu = hdulist[0]
-wcs = WCS(hdu.header)
-# -------- READ FITS FILE. --------
-
 # -------- CHOOSE THE THRESHOLD EXTINCTION --------
-print('\n---------------------')
-
-print('All potential reference points will be taken to be all points with a visual extinction value less than the '
-      'extinction threshold.')
 if abs(regionOfInterest.cloudLatitude) < config.offDiskLatitude:
     Av_threshold = config.onDiskAvThresh
-    print('\t-For clouds that appear near the disk, such as {}, an appropriate threshold value is {}.'
-          .format(cloudName, Av_threshold))
 else:
     Av_threshold = config.offDiskAvThresh
-    print('\t-For clouds that appear off the disk, such as {}, an appropriate threshold value is {}.'
-          .format(cloudName, Av_threshold))
-
-print("Given this information, the threshold extinction has been set to the suggested {}".format(Av_threshold))
 # -------- CHOOSE THE THRESHOLD EXTINCTION. --------
 
 # -------- FIND ALL POTENTIAL REFERENCE POINTS --------
@@ -50,7 +31,6 @@ print("Given this information, the threshold extinction has been set to the sugg
 matchedRMExtinctionData = pd.read_csv(MatchedRMExtincPath, sep='\t')
 # ---- LOAD AND UNPACK MATCHED RM AND EXTINCTION DATA
 
-# ---- FIND ALL POTENTIAL REFERENCE POINTS
 # -------- Criterion: Av < threshold
 '''
 We will only consider points with visual extinction less than the specified threshold value as potential 
@@ -64,13 +44,12 @@ ind_extinction = np.where(matchedRMExtinctionData['Extinction_Value'] <= Av_thre
 AllPotentialRefPoints = matchedRMExtinctionData.loc[ind_extinction].sort_values('Extinction_Value', ignore_index=True)
 numAllRefPoints = len(AllPotentialRefPoints)
 # -------- Criterion: Av < threshold.
-# ---- FIND ALL POTENTIAL REFERENCE POINTS
 
 # ---- SAVE REFERENCE POINT DATA AS A TABLE
 if saveFilePath_ALlPotentialRefPoints is not None:
     AllPotentialRefPoints.to_csv(saveFilePath_ALlPotentialRefPoints, index=False)
 # ---- SAVE REFERENCE POINT DATA AS A TABLE.
-print('Based on this threshold extinction, a total of {} potential reference points were found.'.format(numAllRefPoints))
+print('Based on the threshold extinction of {}, a total of {} potential reference points were found.'.format(Av_threshold, numAllRefPoints))
 print(AllPotentialRefPoints)
 print('---------------------\n')
 # -------- FIND ALL POTENTIAL REFERENCE POINTS. --------

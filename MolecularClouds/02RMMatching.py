@@ -41,7 +41,7 @@ rmData = DataFile(RMCatalogPath, regionOfInterest.raHoursMax, regionOfInterest.r
 # -------- DEFINE THE ERROR RANGE --------
 # The physical limit on how far an extinction value can be from the rm and still be considered valid/applicable
 cloudDistance = regionOfInterest.distance  # [pc]
-cloudJeansLength = config.cloudJeansLength  # [pc]
+cloudJeansLength = regionOfInterest.jeanslength  # [pc]
 minDiff = np.degrees(np.arctan(cloudJeansLength / cloudDistance))  # [deg]
 
 minDiff_pix = minDiff / abs(hdu.header['CDELT1'])
