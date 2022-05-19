@@ -3,8 +3,8 @@ This is the seventh stage of the BLOSMapping method where the uncertainties in t
 """
 import os
 import pandas as pd
-from Classes.RegionOfInterest import Region
-import Classes.config as config
+from LocalLibraries.RegionOfInterest import Region
+import LocalLibraries.config as config
 
 # -------- FUNCTION DEFINITION --------
 def extinctionChemUncertainties(B, BHigher, BLower):

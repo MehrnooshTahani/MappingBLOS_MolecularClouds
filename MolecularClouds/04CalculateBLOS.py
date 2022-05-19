@@ -8,9 +8,9 @@ import numpy as np
 from astropy.wcs import WCS
 from astropy.io import fits
 import matplotlib.pyplot as plt
-from Classes.RegionOfInterest import Region
-from Classes.CalculateB import CalculateB
-import Classes.config as config
+from LocalLibraries.RegionOfInterest import Region
+from LocalLibraries.CalculateB import CalculateB
+import LocalLibraries.config as config
 import math
 # -------- FUNCTION DEFINITION --------
 def B2RGB(b):

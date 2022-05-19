@@ -4,16 +4,9 @@ This is the third stage of the BLOSMapping method where the reference points are
 import os
 import pandas as pd
 import numpy as np
-from astropy.wcs import WCS
-from astropy.io import fits
-import math
-import matplotlib.pyplot as plt
-from Classes.RegionOfInterest import Region
-from Classes.FindAllPotentialRefPoints import FindAllPotentialReferencePoints
-from Classes.FindOptimalRefPoints import FindOptimalRefPoints
-import adjustText
-from Classes.CalculateB import CalculateB
-import Classes.config as config
+
+from LocalLibraries.RegionOfInterest import Region
+import LocalLibraries.config as config
 
 # -------- CHOOSE THE REGION OF INTEREST --------
 cloudName = config.cloud
@@ -28,25 +21,8 @@ MatchedRMExtincPath = os.path.join(config.dir_root, config.dir_fileOutput, confi
 
 # -------- DEFINE FILES AND PATHS. --------
 
-# -------- CHOOSE THE THRESHOLD EXTINCTION --------
-print('\n---------------------')
-
-print('All potential reference points will be taken to be all points with a visual extinction value less than the '
-      'extinction threshold.')
-if abs(regionOfInterest.cloudLatitude) < config.offDiskLatitude:
-    Av_threshold = config.onDiskAvThresh
-    print('\t-For clouds that appear near the disk, such as {}, an appropriate threshold value is {}.'
-          .format(cloudName, Av_threshold))
-else:
-    Av_threshold = config.offDiskAvThresh
-    print('\t-For clouds that appear off the disk, such as {}, an appropriate threshold value is {}.'
-          .format(cloudName, Av_threshold))
-
-print("Given this information, the threshold extinction has been set to the suggested {}".format(Av_threshold))
-# -------- CHOOSE THE THRESHOLD EXTINCTION. --------
-
 # -------- FIND ALL POTENTIAL REFERENCE POINTS --------
-AllPotenitalRefPoints = FindAllPotentialReferencePoints(cloudName, Av_threshold, saveFilePath=saveFilePath_ALlPotentialRefPoints)
+AllPotentialRefPoints = pd.read_csv(saveFilePath_ALlPotentialRefPoints)
 print('---------------------\n')
 # -------- FIND ALL POTENTIAL REFERENCE POINTS. --------
 
@@ -73,10 +49,10 @@ print("\t-Anomalous rotation measure values have been defined to be greater or l
 
 # -------- For each potential reference point
 anomalousRMIndex = []
-for i in range(len(AllPotenitalRefPoints.AllRefPoints)):
-    idNum = AllPotenitalRefPoints.AllRefPoints['ID#'][i]
-    if AllPotenitalRefPoints.AllRefPoints['Rotation_Measure(rad/m2)'][i] < rm_lowerLimit or \
-            AllPotenitalRefPoints.AllRefPoints['Rotation_Measure(rad/m2)'][i] > rm_upperLimit:
+for i in range(len(AllPotentialRefPoints)):
+    idNum = AllPotentialRefPoints['ID#'][i]
+    if AllPotentialRefPoints['Rotation_Measure(rad/m2)'][i] < rm_lowerLimit or \
+            AllPotentialRefPoints['Rotation_Measure(rad/m2)'][i] > rm_upperLimit:
         anomalousRMIndex.append(i + 1)  # To identify points numbered in order of increasing extinction
 # -------- For each potential reference point.
 print('The potential reference point(s) {} have anomalous rotation measure values'.format(anomalousRMIndex))

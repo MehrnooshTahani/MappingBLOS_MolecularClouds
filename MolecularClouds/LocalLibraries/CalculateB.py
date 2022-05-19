@@ -6,6 +6,7 @@ import pandas as pd
 import numpy as np
 from . import config
 
+#Todo: This class should be looked at again.
 
 # -------- CLASS DEFINITION --------
 class CalculateB:
@@ -195,6 +196,6 @@ class CalculateB:
         # -------- CALCULATE THE MAGNETIC FIELD. --------
 
         # -------- SAVE BLOS DATA --------
-        if saveFilePath != 'none':
+        if saveFilePath != None:
             self.BLOSData.to_csv(saveFilePath, index=False)
         # -------- SAVE BLOS DATA. --------

@@ -1,7 +1,9 @@
-import numpy as np
 import math
+import numpy as np
 from sklearn.linear_model import Ridge
+
 import copy
+
 # -------- FUNCTION DEFINITION --------
 def findWeightedCenter(data, xmin = np.nan, xmax = np.nan, ymin = np.nan, ymax = np.nan, maskWeight = 4):
     """
@@ -39,7 +41,7 @@ def findWeightedCenter(data, xmin = np.nan, xmax = np.nan, ymin = np.nan, ymax =
     X, Y = np.meshgrid(x, y)
 
     #Mask out all values not part of the cloud we care about
-    lowExtinctMask = locData < maskWeight * np.sum(locData) / (locData.shape[0] * locData.shape[1]).astype(float)
+    lowExtinctMask = locData < 1.0 * maskWeight * np.sum(locData) / (locData.shape[0] * locData.shape[1])
     locData[lowExtinctMask] = 0
 
     xCoord = ((X * locData).sum() / locData.sum().astype(float)) + xOffset
@@ -137,7 +139,7 @@ def getPerpendicularLine(x, y, m):
 # -------- FUNCTION DEFINITION --------
 
 # -------- FUNCTION DEFINITION --------
-def nearHighExtinction(px, py, hdu, NDelt, highExtinctionThreshold):
+def nearHighExtinction(px, py, data, NDelt, highExtinctionThreshold):
     """
     Checks to see if a point is near a point of high extinction.
     :param px: x location of the point
@@ -152,15 +154,17 @@ def nearHighExtinction(px, py, hdu, NDelt, highExtinctionThreshold):
     ind_ymax = py + NDelt + 1  # add 1 to be inclusive of the upper bound
     ind_xmin = px - NDelt
     ind_ymin = py - NDelt
+
+    ind_xmin = max(ind_xmin, 0)
+    ind_xmax = min(ind_xmax, data.shape[1])
+    ind_ymin = max(ind_ymin, 0)
+    ind_ymax = min(ind_ymax, data.shape[0])
     # ---- Find the extinction range for the given point.
 
-    # ---- Cycle through extinction values within the range
-    for pxx in range(ind_xmin, ind_xmax):
-        for pyy in range(ind_ymin, ind_ymax):
-            if 0 <= pxx < hdu.data.shape[1] and 0 <= pyy < hdu.data.shape[0]:
-                extinction_val = hdu.data[pyy, pxx]
-                if extinction_val > highExtinctionThreshold:
-                    return True
+    # ---- Select the relevant data range and check if any point is greater than the threshold.
+    locData = copy.deepcopy(data[ind_ymin:ind_ymax, ind_xmin:ind_xmax])
+    mask = locData > highExtinctionThreshold
+    if np.sum(mask) > 0:
+        return True
     return False
-    # ---- Cycle through extinction values within the range.
 # -------- FUNCTION DEFINITION --------

@@ -2,18 +2,20 @@
 This is the third stage of the BLOSMapping method where the reference points are determined
 """
 import os
+
 import pandas as pd
 import numpy as np
+
 from astropy.wcs import WCS
 from astropy.io import fits
-import math
+
 import matplotlib.pyplot as plt
-from Classes.RegionOfInterest import Region
-from Classes.FindAllPotentialRefPoints import FindAllPotentialReferencePoints
-from Classes.FindOptimalRefPoints import FindOptimalRefPoints
-import adjustText
-from Classes.CalculateB import CalculateB
-import Classes.config as config
+
+from LocalLibraries.RegionOfInterest import Region
+from LocalLibraries.FindOptimalRefPoints import FindOptimalRefPoints
+from LocalLibraries.CalculateB import CalculateB
+import LocalLibraries.config as config
+import LocalLibraries.RefJudgeLib as rjl
 
 # -------- CHOOSE THE REGION OF INTEREST --------
 cloudName = config.cloud
@@ -51,16 +53,22 @@ else:
 print("Given this information, the threshold extinction has been set to the suggested {}".format(Av_threshold))
 # -------- CHOOSE THE THRESHOLD EXTINCTION. --------
 
-# -------- FIND ALL POTENTIAL REFERENCE POINTS --------
-AllPotenitalRefPoints = FindAllPotentialReferencePoints(cloudName, Av_threshold, saveFilePath=saveFilePath_ALlPotentialRefPoints)
+# -------- LOAD ALL POTENTIAL REFERENCE POINTS --------
+AllPotentialRefPoints = pd.read_csv(saveFilePath_ALlPotentialRefPoints)
 print('---------------------\n')
-# -------- FIND ALL POTENTIAL REFERENCE POINTS. --------
+# -------- LOAD ALL POTENTIAL REFERENCE POINTS. --------
+
+# -------- READ FITS FILE --------
+hdulist = fits.open(regionOfInterest.fitsFilePath)
+hdu = hdulist[0]
+wcs = WCS(hdu.header)
+# -------- READ FITS FILE. --------
 
 # -------- FIND OPTIMAL NUMBER OF REFERENCE POINTS USING "ALL POTENTIAL REFERENCE POINTS" --------
 print('---------------------')
 print('By analyzing the stability of calculated BLOS values as a function of number of reference points from 1 to the '
-      'total number of reference points ({}):'.format(AllPotenitalRefPoints.numAllRefPoints))
-OptimalRefPoints_from_AllPotentialRefPoints = FindOptimalRefPoints(cloudName, AllPotenitalRefPoints.AllRefPoints,
+      'total number of reference points ({}):'.format(len(AllPotentialRefPoints)))
+OptimalRefPoints_from_AllPotentialRefPoints = FindOptimalRefPoints(cloudName, AllPotentialRefPoints,
                                                                    saveFigurePath_BLOSvsNRef_AllPotentialRefPoints)
 
 OptimalNumRefPoints_from_AllPotentialRefPoints = OptimalRefPoints_from_AllPotentialRefPoints. \
@@ -79,9 +87,9 @@ if chooseOptimalNumRefPoints == 'n':
     print('The recommended reference points, numbered in order of increasing extinction, are: {}'.format(
         list([i + 1 for i in range(0, OptimalNumRefPoints_from_AllPotentialRefPoints)])))
 
-    if OptimalNumRefPoints_from_AllPotentialRefPoints > AllPotenitalRefPoints.numAllRefPoints:
+    if OptimalNumRefPoints_from_AllPotentialRefPoints > len(AllPotentialRefPoints):
         print('The number of reference points chosen exceeds the total number of potential reference points.  '
-              'Using the total number of potential reference points ({})'.format(AllPotenitalRefPoints.numAllRefPoints))
+              'Using the total number of potential reference points ({})'.format(len(AllPotentialRefPoints)))
         print('The recommended reference points, numbered in order of increasing extinction, are: {}'.format(
             list([i + 1 for i in range(0, OptimalNumRefPoints_from_AllPotentialRefPoints)])))
 
@@ -93,10 +101,49 @@ print('---------------------\n')
 # -------- ASK THE USER WHICH POINTS THEY WANT TO USE AS REFERENCE POINTS --------
 chosenRefPoints_Num = [int(item) - 1 for item in input('Please enter the numbers of the reference points you would '
                                                        'like to use as comma separated values').split(',')]
-chosenRefPoints = AllPotenitalRefPoints.AllRefPoints.loc[chosenRefPoints_Num].sort_values('Extinction_Value')
-
+chosenRefPoints = AllPotentialRefPoints.loc[chosenRefPoints_Num].sort_values('Extinction_Value')
+#Todo: Here's where it goes.
 print(chosenRefPoints)
 # -------- ASK THE USER WHICH POINTS THEY WANT TO USE AS REFERENCE POINTS. --------
+
+# -------- FIND REGIONS TO SPLIT THE CLOUD INTO. --------
+cloudCenterX, cloudCenterY = rjl.findWeightedCenter(hdu.data, regionOfInterest.xmin, regionOfInterest.xmax, regionOfInterest.ymin, regionOfInterest.ymax)
+m, b = rjl.getDividingLine(hdu.data, regionOfInterest.xmin, regionOfInterest.xmax, regionOfInterest.ymin, regionOfInterest.ymax)
+mPerp, bPerp = rjl.getPerpendicularLine(cloudCenterX, cloudCenterY, m)
+# -------- FIND REGIONS TO SPLIT THE CLOUD INTO. --------
+
+# -------- SORT REF POINTS INTO THESE REGIONS. --------
+Q1 = []
+Q2 = []
+Q3 = []
+Q4 = []
+for i in range(len(chosenRefPoints)):
+    idNum = chosenRefPoints['ID#'][i]
+    px = chosenRefPoints['Extinction_Index_x'][i]
+    py = chosenRefPoints['Extinction_Index_y'][i]
+
+    # ---- Sort into quadrant
+    aboveCloudLine = rjl.isPointAboveLine(px, py, m, b)
+    aboveCloudPerpLine = rjl.isPointAboveLine(px, py, mPerp, bPerp)
+
+    if aboveCloudLine and aboveCloudPerpLine:
+        Q1.append(i+1)
+    elif aboveCloudLine and not aboveCloudPerpLine:
+        Q2.append(i+1)
+    elif not aboveCloudLine and aboveCloudPerpLine:
+        Q3.append(i+1)
+    elif not aboveCloudLine and not aboveCloudPerpLine:
+        Q4.append(i+1)
+    # ---- Sort into quadrant
+# -------- SORT REF POINTS INTO THESE REGIONS. --------
+
+# -------- OUTPUT RESULTS. --------
+print("The potential reference points, sorted by quadrant, are:")
+print("Q1: {}".format(Q1))
+print("Q2: {}".format(Q2))
+print("Q3: {}".format(Q3))
+print("Q4: {}".format(Q4))
+# -------- OUTPUT RESULTS. --------
 
 # -------- REASSESS STABILITY --------
 '''
@@ -106,7 +153,7 @@ However, we also want to include points which come after the chosen reference po
 The following selects all of the chosen reference points and then adds any of the potential reference points with
 extinction greater than the extinction of the last chosen reference point/
 '''
-RefPoints = chosenRefPoints[:-1].append(AllPotenitalRefPoints.AllRefPoints.set_index('ID#').
+RefPoints = chosenRefPoints[:-1].append(AllPotentialRefPoints.set_index('ID#').
                                         loc[list(chosenRefPoints['ID#'])[-1]:].reset_index())\
     .reset_index(drop=True)
 # -------- Read the reference point data
@@ -127,7 +174,7 @@ for num in range(numRefPoints):
     # -------- Extract {num} points from the table of potential reference points.
 
     # -------- Use the candidate reference points to calculate BLOS
-    B = CalculateB(regionOfInterest.AvFilePath, MatchedRMExtincPath, candidateRefPoints, saveFilePath='none')
+    B = CalculateB(regionOfInterest.AvFilePath, MatchedRMExtincPath, candidateRefPoints, saveFilePath=None)
     BLOSData = B.BLOSData.set_index('ID#', drop=True)
     # -------- Use the candidate reference points to calculate BLOS
 

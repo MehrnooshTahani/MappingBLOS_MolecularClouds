@@ -3,11 +3,11 @@ This is the sixth stage the BLOSMapping method where the dependence on temperatu
     - All parameters except for temperature are held constant, and the magnetic field is calculated with electron
     abundances corresponding to a change of +/-  5, 10, and 20 % the fiducial input temperature
 """
-from Classes.CalculateB import CalculateB
+from LocalLibraries.CalculateB import CalculateB
 import os
-from MolecularClouds.Classes.RegionOfInterest import Region
+from MolecularClouds.LocalLibraries.RegionOfInterest import Region
 import pandas as pd
-import Classes.config as config
+import LocalLibraries.config as config
 
 # -------- CHOOSE THE REGION OF INTEREST --------
 cloudName = config.cloud

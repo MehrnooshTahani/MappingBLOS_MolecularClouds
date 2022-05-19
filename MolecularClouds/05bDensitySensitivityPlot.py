@@ -7,8 +7,8 @@ import matplotlib.pyplot as plt
 import numpy as np
 import os
 import pandas as pd
-from MolecularClouds.Classes.RegionOfInterest import Region
-import Classes.config as config
+from MolecularClouds.LocalLibraries.RegionOfInterest import Region
+import LocalLibraries.config as config
 
 # -------- CHOOSE THE REGION OF INTEREST --------
 cloudName = config.cloud

@@ -36,7 +36,7 @@ TEMPLATE (with defaults)
 import os
 from sys import exit
 from configparser import ConfigParser
-import MolecularClouds.Classes.config as config
+import MolecularClouds.LocalLibraries.config as config
 
 class Region:
     def __init__(self, regionName):

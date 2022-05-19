@@ -3,17 +3,12 @@ This is the third stage of the BLOSMapping method where the reference points are
 """
 import os
 import pandas as pd
-import numpy as np
-from astropy.wcs import WCS
-from astropy.io import fits
-import math
-import matplotlib.pyplot as plt
-from Classes.RegionOfInterest import Region
-from Classes.FindAllPotentialRefPoints import FindAllPotentialReferencePoints
-from Classes.FindOptimalRefPoints import FindOptimalRefPoints
-import adjustText
-from Classes.CalculateB import CalculateB
-import Classes.config as config
+
+from LocalLibraries.RegionOfInterest import Region
+from LocalLibraries.FindOptimalRefPoints import FindOptimalRefPoints
+import LocalLibraries.config as config
+
+#Todo: Steps duplicated in f. Unclear if needed. Could be used as an early filter?
 
 # -------- CHOOSE THE REGION OF INTEREST --------
 cloudName = config.cloud
@@ -25,33 +20,16 @@ saveFilePath_ALlPotentialRefPoints = os.path.join(config.dir_root, config.dir_fi
 saveFigurePath_BLOSvsNRef_AllPotentialRefPoints = os.path.join(config.dir_root, config.dir_fileOutput, config.cloud, config.dir_plots, 'BLOS_vs_NRef_AllPotentialRefPoints.png')
 # -------- DEFINE FILES AND PATHS. --------
 
-# -------- CHOOSE THE THRESHOLD EXTINCTION --------
-print('\n---------------------')
-
-print('All potential reference points will be taken to be all points with a visual extinction value less than the '
-      'extinction threshold.')
-if abs(regionOfInterest.cloudLatitude) < config.offDiskLatitude:
-    Av_threshold = config.onDiskAvThresh
-    print('\t-For clouds that appear near the disk, such as {}, an appropriate threshold value is {}.'
-          .format(cloudName, Av_threshold))
-else:
-    Av_threshold = config.offDiskAvThresh
-    print('\t-For clouds that appear off the disk, such as {}, an appropriate threshold value is {}.'
-          .format(cloudName, Av_threshold))
-
-print("Given this information, the threshold extinction has been set to the suggested {}".format(Av_threshold))
-# -------- CHOOSE THE THRESHOLD EXTINCTION. --------
-
-# -------- FIND ALL POTENTIAL REFERENCE POINTS --------
-AllPotenitalRefPoints = FindAllPotentialReferencePoints(cloudName, Av_threshold, saveFilePath=saveFilePath_ALlPotentialRefPoints)
+# -------- LOAD ALL POTENTIAL REFERENCE POINTS --------
+AllPotentialRefPoints = pd.read_csv(saveFilePath_ALlPotentialRefPoints)
 print('---------------------\n')
-# -------- FIND ALL POTENTIAL REFERENCE POINTS. --------
+# -------- LOAD ALL POTENTIAL REFERENCE POINTS. --------
 
 # -------- FIND OPTIMAL NUMBER OF REFERENCE POINTS USING "ALL POTENTIAL REFERENCE POINTS" --------
 print('---------------------')
 print('By analyzing the stability of calculated BLOS values as a function of number of reference points from 1 to the '
-      'total number of reference points ({}):'.format(AllPotenitalRefPoints.numAllRefPoints))
-OptimalRefPoints_from_AllPotentialRefPoints = FindOptimalRefPoints(cloudName, AllPotenitalRefPoints.AllRefPoints,
+      'total number of reference points ({}):'.format(len(AllPotentialRefPoints)))
+OptimalRefPoints_from_AllPotentialRefPoints = FindOptimalRefPoints(cloudName, AllPotentialRefPoints,
                                                                    saveFigurePath_BLOSvsNRef_AllPotentialRefPoints)
 
 OptimalNumRefPoints_from_AllPotentialRefPoints = OptimalRefPoints_from_AllPotentialRefPoints. \
@@ -70,9 +48,9 @@ if chooseOptimalNumRefPoints == 'n':
     print('The recommended reference points, numbered in order of increasing extinction, are: {}'.format(
         list([i + 1 for i in range(0, OptimalNumRefPoints_from_AllPotentialRefPoints)])))
 
-    if OptimalNumRefPoints_from_AllPotentialRefPoints > AllPotenitalRefPoints.numAllRefPoints:
+    if OptimalNumRefPoints_from_AllPotentialRefPoints > len(AllPotentialRefPoints):
         print('The number of reference points chosen exceeds the total number of potential reference points.  '
-              'Using the total number of potential reference points ({})'.format(AllPotenitalRefPoints.numAllRefPoints))
+              'Using the total number of potential reference points ({})'.format(len(AllPotentialRefPoints)))
         print('The recommended reference points, numbered in order of increasing extinction, are: {}'.format(
             list([i + 1 for i in range(0, OptimalNumRefPoints_from_AllPotentialRefPoints)])))
 

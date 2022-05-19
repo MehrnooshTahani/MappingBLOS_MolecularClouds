@@ -3,17 +3,14 @@ This is the third stage of the BLOSMapping method where the reference points are
 """
 import os
 import pandas as pd
-import numpy as np
 from astropy.wcs import WCS
 from astropy.io import fits
 import math
 import matplotlib.pyplot as plt
-from Classes.RegionOfInterest import Region
-from Classes.FindAllPotentialRefPoints import FindAllPotentialReferencePoints
-from Classes.FindOptimalRefPoints import FindOptimalRefPoints
+from LocalLibraries.RegionOfInterest import Region
 import adjustText
-from Classes.CalculateB import CalculateB
-import Classes.config as config
+import LocalLibraries.config as config
+import LocalLibraries.RefJudgeLib as rjl
 
 # -------- CHOOSE THE REGION OF INTEREST --------
 cloudName = config.cloud
@@ -22,8 +19,12 @@ regionOfInterest = Region(cloudName)
 
 # -------- DEFINE FILES AND PATHS --------
 saveFilePath_ALlPotentialRefPoints = os.path.join(config.dir_root, config.dir_fileOutput, config.cloud, config.prefix_allPotRefPoints + config.cloud + '.txt')
-saveFigureDir_RefPointMap = os.path.join(config.dir_root, config.dir_fileOutput, config.cloud, config.dir_plots)
 # -------- DEFINE FILES AND PATHS. --------
+
+# -------- LOAD ALL POTENTIAL REFERENCE POINTS --------
+AllPotentialRefPoints = pd.read_csv(saveFilePath_ALlPotentialRefPoints)
+print('---------------------\n')
+# -------- LOAD ALL POTENTIAL REFERENCE POINTS. --------
 
 # -------- READ FITS FILE --------
 hdulist = fits.open(regionOfInterest.fitsFilePath)
@@ -31,37 +32,59 @@ hdu = hdulist[0]
 wcs = WCS(hdu.header)
 # -------- READ FITS FILE. --------
 
-# -------- CHOOSE THE THRESHOLD EXTINCTION --------
-print('\n---------------------')
+# -------- FIND REGIONS TO SPLIT THE CLOUD INTO. --------
+cloudCenterX, cloudCenterY = rjl.findWeightedCenter(hdu.data, regionOfInterest.xmin, regionOfInterest.xmax, regionOfInterest.ymin, regionOfInterest.ymax)
+m, b = rjl.getDividingLine(hdu.data, regionOfInterest.xmin, regionOfInterest.xmax, regionOfInterest.ymin, regionOfInterest.ymax)
+mPerp, bPerp = rjl.getPerpendicularLine(cloudCenterX, cloudCenterY, m)
 
-print('All potential reference points will be taken to be all points with a visual extinction value less than the '
-      'extinction threshold.')
-if abs(regionOfInterest.cloudLatitude) < config.offDiskLatitude:
-    Av_threshold = config.onDiskAvThresh
-    print('\t-For clouds that appear near the disk, such as {}, an appropriate threshold value is {}.'
-          .format(cloudName, Av_threshold))
-else:
-    Av_threshold = config.offDiskAvThresh
-    print('\t-For clouds that appear off the disk, such as {}, an appropriate threshold value is {}.'
-          .format(cloudName, Av_threshold))
+# ---- Get points to graph these lines
+x = range(0, hdu.data.shape[0])
+if not math.isnan(regionOfInterest.xmax) and not math.isnan(regionOfInterest.xmin):
+    x = range(int(regionOfInterest.xmin), int(regionOfInterest.xmax))
+y = m * x + b
+y2 = mPerp * x + bPerp
+# ---- Get points to graph these lines
+# -------- FIND REGIONS TO SPLIT THE CLOUD INTO. --------
 
-print("Given this information, the threshold extinction has been set to the suggested {}".format(Av_threshold))
-# -------- CHOOSE THE THRESHOLD EXTINCTION. --------
+# -------- SORT REF POINTS INTO THESE REGIONS. --------
+Q1 = []
+Q2 = []
+Q3 = []
+Q4 = []
+for i in range(len(AllPotentialRefPoints)):
+    idNum = AllPotentialRefPoints['ID#'][i]
+    px = AllPotentialRefPoints['Extinction_Index_x'][i]
+    py = AllPotentialRefPoints['Extinction_Index_y'][i]
 
-# -------- FIND ALL POTENTIAL REFERENCE POINTS --------
-AllPotenitalRefPoints = FindAllPotentialReferencePoints(cloudName, Av_threshold, saveFilePath=saveFilePath_ALlPotentialRefPoints)
-print('Based on this threshold extinction, a total of {} potential reference points were found.'.format(AllPotenitalRefPoints.numAllRefPoints))
+    # ---- Sort into quadrant
+    aboveCloudLine = rjl.isPointAboveLine(px, py, m, b)
+    aboveCloudPerpLine = rjl.isPointAboveLine(px, py, mPerp, bPerp)
 
-print(AllPotenitalRefPoints.AllRefPoints)
-print('---------------------\n')
-# -------- FIND ALL POTENTIAL REFERENCE POINTS. --------
+    if aboveCloudLine and aboveCloudPerpLine:
+        Q1.append(i+1)
+    elif aboveCloudLine and not aboveCloudPerpLine:
+        Q2.append(i+1)
+    elif not aboveCloudLine and aboveCloudPerpLine:
+        Q3.append(i+1)
+    elif not aboveCloudLine and not aboveCloudPerpLine:
+        Q4.append(i+1)
+    # ---- Sort into quadrant
+# -------- SORT REF POINTS INTO THESE REGIONS. --------
+
+# -------- OUTPUT RESULTS. --------
+print("The potential reference points, sorted by quadrant, are:")
+print("Q1: {}".format(Q1))
+print("Q2: {}".format(Q2))
+print("Q3: {}".format(Q3))
+print("Q4: {}".format(Q4))
+# -------- OUTPUT RESULTS. --------
 
 # -------- PREPARE TO PLOT ALL POTENTIAL REFERENCE POINTS --------
-n_AllRef = list(AllPotenitalRefPoints.AllRefPoints['ID#'])
-Ra_AllRef = list(AllPotenitalRefPoints.AllRefPoints['Ra(deg)'])
-Dec_AllRef = list(AllPotenitalRefPoints.AllRefPoints['Dec(deg)'])
-RM_AllRef = list(AllPotenitalRefPoints.AllRefPoints['Rotation_Measure(rad/m2)'])
-Av_AllRef = list(AllPotenitalRefPoints.AllRefPoints['Extinction_Value'])
+n_AllRef = list(AllPotentialRefPoints['ID#'])
+Ra_AllRef = list(AllPotentialRefPoints['Ra(deg)'])
+Dec_AllRef = list(AllPotentialRefPoints['Dec(deg)'])
+RM_AllRef = list(AllPotentialRefPoints['Rotation_Measure(rad/m2)'])
+Av_AllRef = list(AllPotentialRefPoints['Extinction_Value'])
 # ---- Convert Ra and Dec of reference points into pixel values of the fits file
 x_AllRef = []  # x pixel coordinate of reference
 y_AllRef = []  # y pixel coordinate of reference
@@ -76,8 +99,15 @@ for i in range(len(Ra_AllRef)):
 fig = plt.figure(figsize=(8, 8), dpi=120, facecolor='w', edgecolor='k')
 ax = fig.add_subplot(111, projection=wcs)
 
-plt.title('All Potential Reference Points' + ' in the ' + cloudName + ' region\n', fontsize=12, y=1.08)
+plt.title('Quadrant division of the ' + cloudName + ' region\n', fontsize=12, y=1.08)
 im = plt.imshow(hdu.data, origin='lower', cmap='BrBG', interpolation='nearest')
+
+plt.plot(x, y)
+plt.plot(x, y2)
+
+ax.set_xlim(0, hdu.data.shape[1])
+ax.set_ylim(0, hdu.data.shape[0])
+
 plt.scatter(x_AllRef, y_AllRef, marker='o', facecolor='green', linewidth=.5, edgecolors='black', s=50)
 
 # ---- Annotate the chosen reference points
@@ -135,10 +165,7 @@ elif regionOfInterest.fitsDataType == 'VisualExtinction':
 # ---- Style the colour bar.
 
 # ---- Display or save the figure
-saveFigurePath_RefPointMap = saveFigureDir_RefPointMap + os.sep + 'RefPointMap_AllPotentialRefPoints.png'
-plt.savefig(saveFigurePath_RefPointMap)
 plt.show()
 plt.close()
 # ---- Display or save the figure.
-print('Saving the map of all potential reference points to '+saveFigurePath_RefPointMap)
 # -------- CREATE A FIGURE - ALL POTENTIAL REF POINTS MAP. --------

@@ -5,7 +5,7 @@ This is the zeroth stage of the BLOSMapping method where the necessary directori
     interest has a folder yet, if not it will make the needed folders and sub-folders.
 """
 import os
-import Classes.config as config
+import LocalLibraries.config as config
 
 # -------- CHOOSE THE REGION OF INTEREST --------
 cloudName = config.cloud

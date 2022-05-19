@@ -6,14 +6,14 @@ The matched rotation measure data and extinction information are saved in a file
 """
 import csv
 from itertools import zip_longest
-from Classes.DataFile import DataFile
+from LocalLibraries.DataFile import DataFile
 import os
 from astropy.io import fits
 from astropy.wcs import WCS
 import numpy as np
 import math
-from Classes.RegionOfInterest import Region
-import Classes.config as config
+from LocalLibraries.RegionOfInterest import Region
+import LocalLibraries.config as config
 
 # -------- CHOOSE THE REGION OF INTEREST --------
 cloudName = config.cloud

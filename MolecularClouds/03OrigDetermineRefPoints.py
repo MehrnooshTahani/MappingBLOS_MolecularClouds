@@ -8,12 +8,12 @@ from astropy.wcs import WCS
 from astropy.io import fits
 import math
 import matplotlib.pyplot as plt
-from Classes.RegionOfInterest import Region
-from Classes.FindAllPotentialRefPoints import FindAllPotentialReferencePoints
-from Classes.FindOptimalRefPoints import FindOptimalRefPoints
+from LocalLibraries.RegionOfInterest import Region
+from LocalLibraries.FindAllPotentialRefPoints import FindAllPotentialReferencePoints
+from LocalLibraries.FindOptimalRefPoints import FindOptimalRefPoints
 import adjustText
-from Classes.CalculateB import CalculateB
-import Classes.config as config
+from LocalLibraries.CalculateB import CalculateB
+import LocalLibraries.config as config
 
 # -------- CHOOSE THE REGION OF INTEREST --------
 cloudName = config.cloud
@@ -59,19 +59,19 @@ print("Given this information, the threshold extinction has been set to the sugg
 # -------- CHOOSE THE THRESHOLD EXTINCTION. --------
 
 # -------- FIND ALL POTENTIAL REFERENCE POINTS --------
-AllPotenitalRefPoints = FindAllPotentialReferencePoints(cloudName, Av_threshold, saveFilePath=saveFilePath_ALlPotentialRefPoints)
-print('Based on this threshold extinction, a total of {} potential reference points were found.'.format(AllPotenitalRefPoints.numAllRefPoints))
+AllPotentialRefPoints = FindAllPotentialReferencePoints(cloudName, Av_threshold, saveFilePath=saveFilePath_ALlPotentialRefPoints)
+print('Based on this threshold extinction, a total of {} potential reference points were found.'.format(AllPotentialRefPoints.numAllRefPoints))
 
-print(AllPotenitalRefPoints.AllRefPoints)
+print(AllPotentialRefPoints.AllRefPoints)
 print('---------------------\n')
 # -------- FIND ALL POTENTIAL REFERENCE POINTS. --------
 
 # -------- PREPARE TO PLOT ALL POTENTIAL REFERENCE POINTS --------
-n_AllRef = list(AllPotenitalRefPoints.AllRefPoints['ID#'])
-Ra_AllRef = list(AllPotenitalRefPoints.AllRefPoints['Ra(deg)'])
-Dec_AllRef = list(AllPotenitalRefPoints.AllRefPoints['Dec(deg)'])
-RM_AllRef = list(AllPotenitalRefPoints.AllRefPoints['Rotation_Measure(rad/m2)'])
-Av_AllRef = list(AllPotenitalRefPoints.AllRefPoints['Extinction_Value'])
+n_AllRef = list(AllPotentialRefPoints.AllRefPoints['ID#'])
+Ra_AllRef = list(AllPotentialRefPoints.AllRefPoints['Ra(deg)'])
+Dec_AllRef = list(AllPotentialRefPoints.AllRefPoints['Dec(deg)'])
+RM_AllRef = list(AllPotentialRefPoints.AllRefPoints['Rotation_Measure(rad/m2)'])
+Av_AllRef = list(AllPotentialRefPoints.AllRefPoints['Extinction_Value'])
 # ---- Convert Ra and Dec of reference points into pixel values of the fits file
 x_AllRef = []  # x pixel coordinate of reference
 y_AllRef = []  # y pixel coordinate of reference
@@ -156,8 +156,8 @@ print('Saving the map of all potential reference points to '+saveFigurePath_RefP
 # -------- FIND OPTIMAL NUMBER OF REFERENCE POINTS USING "ALL POTENTIAL REFERENCE POINTS" --------
 print('---------------------')
 print('By analyzing the stability of calculated BLOS values as a function of number of reference points from 1 to the '
-      'total number of reference points ({}):'.format(AllPotenitalRefPoints.numAllRefPoints))
-OptimalRefPoints_from_AllPotentialRefPoints = FindOptimalRefPoints(cloudName, AllPotenitalRefPoints.AllRefPoints,
+      'total number of reference points ({}):'.format(AllPotentialRefPoints.numAllRefPoints))
+OptimalRefPoints_from_AllPotentialRefPoints = FindOptimalRefPoints(cloudName, AllPotentialRefPoints.AllRefPoints,
                                                                    saveFigurePath_BLOSvsNRef_AllPotentialRefPoints)
 
 OptimalNumRefPoints_from_AllPotentialRefPoints = OptimalRefPoints_from_AllPotentialRefPoints. \
@@ -176,9 +176,9 @@ if chooseOptimalNumRefPoints == 'n':
     print('The recommended reference points, numbered in order of increasing extinction, are: {}'.format(
         list([i + 1 for i in range(0, OptimalNumRefPoints_from_AllPotentialRefPoints)])))
 
-    if OptimalNumRefPoints_from_AllPotentialRefPoints > AllPotenitalRefPoints.numAllRefPoints:
+    if OptimalNumRefPoints_from_AllPotentialRefPoints > AllPotentialRefPoints.numAllRefPoints:
         print('The number of reference points chosen exceeds the total number of potential reference points.  '
-              'Using the total number of potential reference points ({})'.format(AllPotenitalRefPoints.numAllRefPoints))
+              'Using the total number of potential reference points ({})'.format(AllPotentialRefPoints.numAllRefPoints))
         print('The recommended reference points, numbered in order of increasing extinction, are: {}'.format(
             list([i + 1 for i in range(0, OptimalNumRefPoints_from_AllPotentialRefPoints)])))
 
@@ -208,10 +208,10 @@ print("\t-A region of high extinction has been defined to the suggested suggeste
 
 # -------- For each potential reference point
 nearHighExtinctionRegion = []
-for i in range(len(AllPotenitalRefPoints.AllRefPoints)):
-    idNum = AllPotenitalRefPoints.AllRefPoints['ID#'][i]
-    px = AllPotenitalRefPoints.AllRefPoints['Extinction_Index_x'][i]
-    py = AllPotenitalRefPoints.AllRefPoints['Extinction_Index_y'][i]
+for i in range(len(AllPotentialRefPoints.AllRefPoints)):
+    idNum = AllPotentialRefPoints.AllRefPoints['ID#'][i]
+    px = AllPotentialRefPoints.AllRefPoints['Extinction_Index_x'][i]
+    py = AllPotentialRefPoints.AllRefPoints['Extinction_Index_y'][i]
 
     # ---- Find the extinction range for the given point
     ind_xmax = px + NDelt + 1  # add 1 to be inclusive of the upper bound
@@ -266,10 +266,10 @@ print("\t-Anomalous rotation measure values have been defined to be greater or l
 
 # -------- For each potential reference point
 anomalousRMIndex = []
-for i in range(len(AllPotenitalRefPoints.AllRefPoints)):
-    idNum = AllPotenitalRefPoints.AllRefPoints['ID#'][i]
-    if AllPotenitalRefPoints.AllRefPoints['Rotation_Measure(rad/m2)'][i] < rm_lowerLimit or \
-            AllPotenitalRefPoints.AllRefPoints['Rotation_Measure(rad/m2)'][i] > rm_upperLimit:
+for i in range(len(AllPotentialRefPoints.AllRefPoints)):
+    idNum = AllPotentialRefPoints.AllRefPoints['ID#'][i]
+    if AllPotentialRefPoints.AllRefPoints['Rotation_Measure(rad/m2)'][i] < rm_lowerLimit or \
+            AllPotentialRefPoints.AllRefPoints['Rotation_Measure(rad/m2)'][i] > rm_upperLimit:
         anomalousRMIndex.append(i + 1)  # To identify points numbered in order of increasing extinction
 # -------- For each potential reference point.
 
@@ -286,7 +286,7 @@ print('---------------------\n')
 # -------- ASK THE USER WHICH POINTS THEY WANT TO USE AS REFERENCE POINTS --------
 chosenRefPoints_Num = [int(item) - 1 for item in input('Please enter the numbers of the reference points you would '
                                                        'like to use as comma separated values').split(',')]
-chosenRefPoints = AllPotenitalRefPoints.AllRefPoints.loc[chosenRefPoints_Num].sort_values('Extinction_Value')
+chosenRefPoints = AllPotentialRefPoints.AllRefPoints.loc[chosenRefPoints_Num].sort_values('Extinction_Value')
 
 print(chosenRefPoints)
 # -------- ASK THE USER WHICH POINTS THEY WANT TO USE AS REFERENCE POINTS. --------
@@ -299,7 +299,7 @@ However, we also want to include points which come after the chosen reference po
 The following selects all of the chosen reference points and then adds any of the potential reference points with
 extinction greater than the extinction of the last chosen reference point/
 '''
-RefPoints = chosenRefPoints[:-1].append(AllPotenitalRefPoints.AllRefPoints.set_index('ID#').
+RefPoints = chosenRefPoints[:-1].append(AllPotentialRefPoints.AllRefPoints.set_index('ID#').
                                         loc[list(chosenRefPoints['ID#'])[-1]:].reset_index())\
     .reset_index(drop=True)
 # -------- Read the reference point data
@@ -320,7 +320,7 @@ for num in range(numRefPoints):
     # -------- Extract {num} points from the table of potential reference points.
 
     # -------- Use the candidate reference points to calculate BLOS
-    B = CalculateB(regionOfInterest.AvFilePath, MatchedRMExtincPath, candidateRefPoints, saveFilePath='none')
+    B = CalculateB(regionOfInterest.AvFilePath, MatchedRMExtincPath, candidateRefPoints, saveFilePath=None)
     BLOSData = B.BLOSData.set_index('ID#', drop=True)
     # -------- Use the candidate reference points to calculate BLOS
 

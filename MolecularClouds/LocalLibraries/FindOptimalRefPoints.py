@@ -9,7 +9,9 @@ import os
 from .CalculateB import CalculateB
 from .RegionOfInterest import Region
 from statistics import mode
-import MolecularClouds.Classes.config as config
+import MolecularClouds.LocalLibraries.config as config
+
+#Todo: Only one attribute is used: Optimal_NumRefPoints_firstMode . Consider turning into a function?
 
 # -------- CLASS DEFINITION --------
 class FindOptimalRefPoints:
@@ -22,7 +24,7 @@ class FindOptimalRefPoints:
         :param saveFigurePath: Path to where the Blos vs Nref figure is saved
         """
 
-        regionOfInterest = Region(cloudName)
+        regionOfInterest = Region(config.cloud)
 
         # -------- LOAD AND UNPACK MATCHED RM AND EXTINCTION DATA --------
         MatchedRMExtincPath = os.path.join(config.dir_root, config.dir_fileOutput, config.cloud, config.prefix_RMExtinctionMatch + config.cloud + '.txt')
@@ -48,7 +50,7 @@ class FindOptimalRefPoints:
             # -------- Extract {num} points from the table of potential reference points.
 
             # -------- Use the candidate reference points to calculate BLOS
-            B = CalculateB(regionOfInterest.AvFilePath, MatchedRMExtincPath, candidateRefPoints, saveFilePath='none')
+            B = CalculateB(regionOfInterest.AvFilePath, MatchedRMExtincPath, candidateRefPoints, saveFilePath=None)
             BLOSData = B.BLOSData.set_index('ID#', drop=True)
             # -------- Use the candidate reference points to calculate BLOS
 
@@ -70,7 +72,7 @@ class FindOptimalRefPoints:
         # -------- CREATE A FIGURE --------
         plt.figure(figsize=(6, 4), dpi=120, facecolor='w', edgecolor='k')
 
-        plt.title('Calculated BLOS value as a function of the number of reference points \n ' + cloudName, fontsize=12,
+        plt.title('Calculated BLOS value as a function of the number of reference points \n ' + config.cloud, fontsize=12,
                   y=1.08)
         plt.xlabel('Number of reference points')
         plt.ylabel('Calculated BLOS value ' + r'($\mu G$)')

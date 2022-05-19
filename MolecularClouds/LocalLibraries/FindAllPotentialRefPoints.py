@@ -7,8 +7,9 @@ It is used in the third stage of the BLOS Mapping Method.
 import pandas as pd
 import numpy as np
 import os
-import MolecularClouds.Classes.config as config
+import MolecularClouds.LocalLibraries.config as config
 
+#Todo: This is actually a function which is only ever needed once by script 3.
 
 # -------- CLASS DEFINITION --------
 class FindAllPotentialReferencePoints:
@@ -25,7 +26,7 @@ class FindAllPotentialReferencePoints:
         """
 
         # -------- LOAD AND UNPACK MATCHED RM AND EXTINCTION DATA --------
-        MatchedRMExtincPath = os.path.join(config.dir_root, config.dir_fileOutput, config.cloud, config.prefix_RMExtinctionMatch + cloudName + '.txt')
+        MatchedRMExtincPath = os.path.join(config.dir_root, config.dir_fileOutput, config.cloud, config.prefix_RMExtinctionMatch + config.cloud + '.txt')
         matchedRMExtinctionData = pd.read_csv(MatchedRMExtincPath, sep='\t')
         # -------- LOAD AND UNPACK MATCHED RM AND EXTINCTION DATA. --------
 
@@ -49,7 +50,7 @@ class FindAllPotentialReferencePoints:
         # -------- FIND ALL POTENTIAL REFERENCE POINTS.  --------
 
         # -------- SAVE REFERENCE POINT DATA AS A TABLE --------
-        if saveFilePath != 'none':
+        if saveFilePath != None:
             self.AllRefPoints.to_csv(saveFilePath, index=False)
         # -------- SAVE REFERENCE POINT DATA AS A TABLE. --------
 

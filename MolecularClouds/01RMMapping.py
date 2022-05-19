@@ -2,15 +2,15 @@
 This file maps the RMs on the extinction files as a first step to get an understanding of the rotation measure coverage
 of the region of interest.
 """
-from Classes.DataFile import DataFile
+from LocalLibraries.DataFile import DataFile
 import numpy as np
 import matplotlib.pyplot as plt
 import matplotlib.cm as cm
 from astropy.wcs import WCS
 from astropy.io import fits
 import os
-from Classes.RegionOfInterest import Region
-import Classes.config as config
+from LocalLibraries.RegionOfInterest import Region
+import LocalLibraries.config as config
 import math
 
 # -------- CHOOSE THE REGION OF INTEREST --------

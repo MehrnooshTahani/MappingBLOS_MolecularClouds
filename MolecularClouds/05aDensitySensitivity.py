@@ -3,11 +3,11 @@ This is the fifth stage of the BLOSMapping method where the dependence on densit
     - All parameters except for density are held constant, and the magnetic field is calculated with electron abundances
     corresponding to changes of 0 and +/- 1, 2.5, 5, 10, 20, 20, 40, and 50 % the fiducial input density
 """
-from Classes.CalculateB import CalculateB
+from LocalLibraries.CalculateB import CalculateB
 import os
-from MolecularClouds.Classes.RegionOfInterest import Region
+from MolecularClouds.LocalLibraries.RegionOfInterest import Region
 import pandas as pd
-import Classes.config as config
+import LocalLibraries.config as config
 
 # -------- CHOOSE THE REGION OF INTEREST --------
 cloudName = config.cloud
