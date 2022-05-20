@@ -1,6 +1,7 @@
 import math
 import numpy as np
 from sklearn.linear_model import Ridge
+from statistics import mode
 
 import copy
 
@@ -213,3 +214,4 @@ def sortQuadrants(ind, X, Y, m, b, m2, b2):
             Q4.append(i + 1)
     return Q1, Q2, Q3, Q4
 # -------- FUNCTION DEFINITION --------
+

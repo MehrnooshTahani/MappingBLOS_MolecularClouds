@@ -5,6 +5,7 @@ import os
 
 import LocalLibraries.config as config
 from LocalLibraries.RegionOfInterest import Region
+import LocalLibraries.RefJudgeLib as rjl
 
 import pandas as pd
 import numpy as np
@@ -37,16 +38,9 @@ We will only consider points with visual extinction less than the specified thre
 reference points
 - Here we extract these points and sort the resulting dataframe from smallest to greatest extinction 
 '''
-def maskRows(dataframe, threshold, columnName):
-    # Indices where the threshold is met in the given column
-    ind = np.where(dataframe[columnName] <= threshold)[0]
-    # All rows which exceed the threshold value in the given column
-    rowSet = dataframe.loc[ind].sort_values(columnName, ignore_index=True)
-    numAllRefPoints = len(rowSet)
-    return rowSet, numAllRefPoints
 
 # All potential reference points are all reference points with extinction less than the threshold:
-AllPotentialRefPoints, numAllRefPoints = maskRows(matchedRMExtinctionData, Av_threshold, 'Extinction_Value')
+AllPotentialRefPoints, numAllRefPoints = rjl.maskRows(matchedRMExtinctionData, Av_threshold, 'Extinction_Value')
 # -------- Criterion: Av < threshold.
 
 # ---- SAVE REFERENCE POINT DATA AS A TABLE
