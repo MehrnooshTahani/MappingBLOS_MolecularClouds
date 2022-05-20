@@ -105,7 +105,7 @@ mPerp, bPerp = rjl.getPerpendicularLine(cloudCenterX, cloudCenterY, m)
 # -------- FIND REGIONS TO SPLIT THE CLOUD INTO. --------
 
 # -------- SORT REF POINTS INTO THESE REGIONS. --------
-Q1, Q2, Q3, Q4 = rjl.sortQuadrants(list(chosenRefPoints.head().index), chosenRefPoints['Extinction_Index_x'], chosenRefPoints['Extinction_Index_y'], m, b, mPerp, bPerp)
+Q1, Q2, Q3, Q4 = rjl.sortQuadrants(list(chosenRefPoints.index), chosenRefPoints['Extinction_Index_x'], chosenRefPoints['Extinction_Index_y'], m, b, mPerp, bPerp)
 # ---- Sort into quadrant
 # -------- SORT REF POINTS INTO THESE REGIONS. --------
 

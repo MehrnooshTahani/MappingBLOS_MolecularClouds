@@ -49,7 +49,7 @@ y2 = mPerp * x + bPerp
 # -------- FIND REGIONS TO SPLIT THE CLOUD INTO. --------
 
 # -------- SORT REF POINTS INTO THESE REGIONS. --------
-Q1, Q2, Q3, Q4 = rjl.sortQuadrants(list(AllPotentialRefPoints.head().index), AllPotentialRefPoints['Extinction_Index_x'], AllPotentialRefPoints['Extinction_Index_y'], m, b, mPerp, bPerp)
+Q1, Q2, Q3, Q4 = rjl.sortQuadrants(list(AllPotentialRefPoints.index), AllPotentialRefPoints['Extinction_Index_x'], AllPotentialRefPoints['Extinction_Index_y'], m, b, mPerp, bPerp)
 # ---- Sort into quadrant
 # -------- SORT REF POINTS INTO THESE REGIONS. --------
 

@@ -165,6 +165,8 @@ class FindOptimalRefPoints:
         DataNoRef.to_csv(
             os.path.join(config.dir_root, config.dir_fileOutput, config.prefix_OptRefPoints + config.cloud + '.txt'))
 
+        stabilityTrendGraph(DataNoRef, saveFigurePath)
+
         TotalNumPoints = len(matchedRMExtinctionData)
         '''
         We can now determine the optimal number of reference points using the calculated BLOS values as a function of 
@@ -190,14 +192,15 @@ class FindOptimalRefPoints:
             Optimal_NumRefPoints_secondMode_percent = (len(
                 np.where(Optimal_NumRefPoints_Selection == self.Optimal_NumRefPoints_secondMode)[0]) / len(
                 Optimal_NumRefPoints_Selection)) * 100
+            print('\t - {} appears second most often ({:.0f}%) as the optimal number of reference points'.format(
+                self.Optimal_NumRefPoints_secondMode, Optimal_NumRefPoints_secondMode_percent))
 
         self.Optimal_NumRefPoints_max = max(Optimal_NumRefPoints_Selection)
         self.Optimal_NumRefPoints_min = min(Optimal_NumRefPoints_Selection)
 
         print('\t - {} appears most often ({:.0f}%) as the optimal number of reference points'.format(
             self.Optimal_NumRefPoints_firstMode, Optimal_NumRefPoints_firstMode_percent))
-        print('\t - {} appears second most often ({:.0f}%) as the optimal number of reference points'.format(
-            self.Optimal_NumRefPoints_secondMode, Optimal_NumRefPoints_secondMode_percent))
+
         print('\t - {} is the maximum optimal number of reference points.'.format(
             self.Optimal_NumRefPoints_max))
         print('\t - {} is the minimum optimal number of reference points.'.format(

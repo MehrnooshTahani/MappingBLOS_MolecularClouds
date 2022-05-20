@@ -11,7 +11,8 @@ configStartSettings['Judgement'] = {
     'Off Disk Latitude': 15.,
     'On Disk Extinction Threshold': 2.,
     'Off Disk Extinction Threshold': 1.,
-    'Pixel Check Range Multiplier': 2,
+    'Near High Extinction Multiplier': 2,
+    'Far High Extinction Multiplier': 14,
     'High Extinction Threshold Multiplier': 5,
     'Anomalous Values Standard Deviation': 3.
     }

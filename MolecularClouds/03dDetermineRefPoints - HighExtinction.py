@@ -51,8 +51,10 @@ cloudJeansLength = regionOfInterest.jeanslength  # [pc]
 minDiff = np.degrees(np.arctan(cloudJeansLength / cloudDistance))  # [deg]
 
 minDiff_pix = minDiff / abs(hdu.header['CDELT1'])
-NDelt = config.pixelCheckMultiplier * math.ceil(minDiff_pix)  # Round up
-print("\t-A region around the point has been defined to the suggested {} pixels".format(NDelt))
+NDeltNear = config.nearExtinctionMultiplier * math.ceil(minDiff_pix)  # Round up
+NDeltFar = config.farExtinctionMultiplier * math.ceil(minDiff_pix)  # Round up
+print("\t-A close region around the point has been defined to the suggested {} pixels".format(NDeltNear))
+print("\t-A far region around the point has been defined to the suggested {} pixels".format(NDeltFar))
 
 # Choose the minimum extinction value which you want to correspond to an "on" position
 highExtinctionThreshold = config.highExtinctionThreshMultiplier * Av_threshold
@@ -63,15 +65,15 @@ print("\t-A region of high extinction has been defined to the suggested suggeste
 # -------- For each potential reference point
 nearHighExtinctionRegion = []
 farHighExtinctionRegion = []
-for i in list(AllPotentialRefPoints.head().index):
+for i in list(AllPotentialRefPoints.index):
     idNum = AllPotentialRefPoints['ID#'][i]
     px = AllPotentialRefPoints['Extinction_Index_x'][i]
     py = AllPotentialRefPoints['Extinction_Index_y'][i]
 
     # ---- Find the extinction range for the given point
-    if rjl.nearHighExtinction(px, py, hdu.data, NDelt, highExtinctionThreshold):
+    if rjl.nearHighExtinction(px, py, hdu.data, NDeltNear, highExtinctionThreshold):
         nearHighExtinctionRegion.append(i + 1)
-    if not rjl.nearHighExtinction(px, py, hdu.data, NDelt * 2, highExtinctionThreshold):
+    if not rjl.nearHighExtinction(px, py, hdu.data, NDeltFar, highExtinctionThreshold):
         farHighExtinctionRegion.append(i + 1)
     # ---- Find the extinction range for the given point.
 # -------- For each potential reference point.
