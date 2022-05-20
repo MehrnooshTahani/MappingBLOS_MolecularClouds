@@ -30,20 +30,10 @@ wcs = WCS(hdu.header)
 # -------- READ FITS FILE. --------
 
 # -------- CHOOSE THE THRESHOLD EXTINCTION --------
-print('\n---------------------')
-
-print('All potential reference points will be taken to be all points with a visual extinction value less than the '
-      'extinction threshold.')
 if abs(regionOfInterest.cloudLatitude) < config.offDiskLatitude:
     Av_threshold = config.onDiskAvThresh
-    print('\t-For clouds that appear near the disk, such as {}, an appropriate threshold value is {}.'
-          .format(cloudName, Av_threshold))
 else:
     Av_threshold = config.offDiskAvThresh
-    print('\t-For clouds that appear off the disk, such as {}, an appropriate threshold value is {}.'
-          .format(cloudName, Av_threshold))
-
-print("Given this information, the threshold extinction has been set to the suggested {}".format(Av_threshold))
 # -------- CHOOSE THE THRESHOLD EXTINCTION. --------
 
 # -------- LOAD ALL POTENTIAL REFERENCE POINTS --------
@@ -73,7 +63,7 @@ print("\t-A region of high extinction has been defined to the suggested suggeste
 # -------- For each potential reference point
 nearHighExtinctionRegion = []
 farHighExtinctionRegion = []
-for i in range(len(AllPotentialRefPoints)):
+for i in list(AllPotentialRefPoints.head().index):
     idNum = AllPotentialRefPoints['ID#'][i]
     px = AllPotentialRefPoints['Extinction_Index_x'][i]
     py = AllPotentialRefPoints['Extinction_Index_y'][i]

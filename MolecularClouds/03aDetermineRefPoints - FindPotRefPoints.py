@@ -37,12 +37,16 @@ We will only consider points with visual extinction less than the specified thre
 reference points
 - Here we extract these points and sort the resulting dataframe from smallest to greatest extinction 
 '''
-# Indices where the extinction is less than the threshold:
-ind_extinction = np.where(matchedRMExtinctionData['Extinction_Value'] <= Av_threshold)[0]
+def maskRows(dataframe, threshold, columnName):
+    # Indices where the threshold is met in the given column
+    ind = np.where(dataframe[columnName] <= threshold)[0]
+    # All rows which exceed the threshold value in the given column
+    rowSet = dataframe.loc[ind].sort_values(columnName, ignore_index=True)
+    numAllRefPoints = len(rowSet)
+    return rowSet, numAllRefPoints
 
 # All potential reference points are all reference points with extinction less than the threshold:
-AllPotentialRefPoints = matchedRMExtinctionData.loc[ind_extinction].sort_values('Extinction_Value', ignore_index=True)
-numAllRefPoints = len(AllPotentialRefPoints)
+AllPotentialRefPoints, numAllRefPoints = maskRows(matchedRMExtinctionData, Av_threshold, 'Extinction_Value')
 # -------- Criterion: Av < threshold.
 
 # ---- SAVE REFERENCE POINT DATA AS A TABLE

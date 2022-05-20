@@ -168,3 +168,48 @@ def nearHighExtinction(px, py, data, NDelt, highExtinctionThreshold):
         return True
     return False
 # -------- FUNCTION DEFINITION --------
+
+# -------- FUNCTION DEFINITION --------
+def maskRows(dataframe, threshold, columnName):
+    # Indices where the threshold is met in the given column
+    ind = np.where(dataframe[columnName] <= threshold)[0]
+    # All rows which exceed the threshold value in the given column
+    rowSet = dataframe.loc[ind].sort_values(columnName, ignore_index=True)
+    numAllRefPoints = len(rowSet)
+    return rowSet, numAllRefPoints
+# -------- FUNCTION DEFINITION --------
+
+# -------- FUNCTION DEFINITION --------
+def RADec2xy(RA, Dec, wcs):
+    xCoords = []
+    yCoords = []
+    for i in range(len(RA)):
+        pixelRow, pixelColumn = wcs.wcs_world2pix(RA[i], Dec[i], 0)
+        xCoords.append(pixelRow)
+        yCoords.append(pixelColumn)
+    return xCoords, yCoords
+# -------- FUNCTION DEFINITION --------
+
+# -------- FUNCTION DEFINITION --------
+def sortQuadrants(ind, X, Y, m, b, m2, b2):
+    Q1 = []
+    Q2 = []
+    Q3 = []
+    Q4 = []
+    for i in ind:
+        px = X[i]
+        py = Y[i]
+        # ---- Sort into quadrant
+        aboveLine1 = isPointAboveLine(px, py, m, b)
+        aboveLine2 = isPointAboveLine(px, py, m2, b2)
+
+        if aboveLine1 and aboveLine2:
+            Q1.append(i + 1)
+        elif aboveLine1 and not aboveLine2:
+            Q2.append(i + 1)
+        elif not aboveLine1 and aboveLine2:
+            Q3.append(i + 1)
+        elif not aboveLine1 and not aboveLine2:
+            Q4.append(i + 1)
+    return Q1, Q2, Q3, Q4
+# -------- FUNCTION DEFINITION --------

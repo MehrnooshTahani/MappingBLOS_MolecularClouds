@@ -12,6 +12,7 @@ import os
 from LocalLibraries.RegionOfInterest import Region
 import LocalLibraries.config as config
 import math
+import LocalLibraries.PlotTemplates as pt
 
 # -------- CHOOSE THE REGION OF INTEREST --------
 cloudName = config.cloud
@@ -78,60 +79,10 @@ color, size = rm2RGB(rmData.targetRotationMeasures)
 # -------- PREPARE TO PLOT ROTATION MEASURES. --------
 
 # -------- CREATE A FIGURE --------
-fig = plt.figure(figsize=(8, 8), dpi=120, facecolor='w', edgecolor='k')
-ax = fig.add_subplot(111, projection=wcs)
-
-
-colourMap = cm.get_cmap("BrBG")
-ax.patch.set_facecolor(colourMap(-1))
+fig, ax = pt.extinctionPlot(hdu, regionOfInterest)
 
 plt.title('Rotation Measure Data' + ' in the '+cloudName+' region\n', fontsize=12, y=1.08)
-im = plt.imshow(hdu.data, origin='lower', cmap=colourMap, interpolation='nearest')
 plt.scatter(x, y, marker='o', s=size, facecolor=color, linewidth=.5, edgecolors='black')
-
-# ---- Style the main axes and their grid
-if not math.isnan(regionOfInterest.xmax) and not math.isnan(regionOfInterest.xmin):
-    ax.set_xlim(regionOfInterest.xmin, regionOfInterest.xmax)
-if not math.isnan(regionOfInterest.ymax) and not math.isnan(regionOfInterest.ymin):
-    ax.set_ylim(regionOfInterest.ymin, regionOfInterest.ymax)
-
-ra = ax.coords[0]
-dec = ax.coords[1]
-ra.set_major_formatter('d')
-dec.set_major_formatter('d')
-ra.set_axislabel('RA (degree)')
-dec.set_axislabel('Dec (degree)')
-
-dec.set_ticks(number=10)
-ra.set_ticks(number=20)
-ra.display_minor_ticks(True)
-dec.display_minor_ticks(True)
-ra.set_minor_frequency(10)
-
-ra.grid(color='black', alpha=0.5, linestyle='solid')
-dec.grid(color='black', alpha=0.5, linestyle='solid')
-# ---- Style the main axes and their grid.
-
-# ---- Style the overlay and its grid
-overlay = ax.get_coords_overlay('galactic')
-
-overlay[0].set_axislabel('Longitude')
-overlay[1].set_axislabel('Latitude')
-
-overlay[0].set_ticks(color='grey', number=20)
-overlay[1].set_ticks(color='grey', number=20)
-
-overlay.grid(color='grey', linestyle='solid', alpha=0.7)
-# ---- Style the overlay and its grid.
-
-# ---- Style the colour bar
-if regionOfInterest.fitsDataType == 'HydrogenColumnDensity':
-    cb = plt.colorbar(im, ticklocation='right', fraction=0.02, pad=0.145, format='%.0e')
-    cb.ax.set_title('Hydrogen Column Density', linespacing=0.5, fontsize=12)
-elif regionOfInterest.fitsDataType == 'VisualExtinction':
-    cb = plt.colorbar(im, ticklocation='right', fraction=0.02, pad=0.145)
-    cb.ax.set_title(' A' + r'$_V$', linespacing=0.5, fontsize=12)
-# ---- Style the colour bar.
 
 # ---- Style the legend
 marker1 = plt.scatter([], [], s=10, facecolor=(1, 1, 1, 0.7), edgecolor='black')
@@ -159,5 +110,5 @@ frame.set_alpha(0.4)
 
 plt.savefig(saveFigurePath, bbox_inches='tight')
 print('Saving figure to '+saveFigurePath)
-# plt.show()
+plt.show()
 # -------- CREATE A FIGURE. --------

@@ -11,6 +11,7 @@ from LocalLibraries.RegionOfInterest import Region
 import adjustText
 import LocalLibraries.config as config
 import LocalLibraries.RefJudgeLib as rjl
+import LocalLibraries.PlotTemplates as pt
 
 # -------- CHOOSE THE REGION OF INTEREST --------
 cloudName = config.cloud
@@ -48,28 +49,8 @@ y2 = mPerp * x + bPerp
 # -------- FIND REGIONS TO SPLIT THE CLOUD INTO. --------
 
 # -------- SORT REF POINTS INTO THESE REGIONS. --------
-Q1 = []
-Q2 = []
-Q3 = []
-Q4 = []
-for i in range(len(AllPotentialRefPoints)):
-    idNum = AllPotentialRefPoints['ID#'][i]
-    px = AllPotentialRefPoints['Extinction_Index_x'][i]
-    py = AllPotentialRefPoints['Extinction_Index_y'][i]
-
-    # ---- Sort into quadrant
-    aboveCloudLine = rjl.isPointAboveLine(px, py, m, b)
-    aboveCloudPerpLine = rjl.isPointAboveLine(px, py, mPerp, bPerp)
-
-    if aboveCloudLine and aboveCloudPerpLine:
-        Q1.append(i+1)
-    elif aboveCloudLine and not aboveCloudPerpLine:
-        Q2.append(i+1)
-    elif not aboveCloudLine and aboveCloudPerpLine:
-        Q3.append(i+1)
-    elif not aboveCloudLine and not aboveCloudPerpLine:
-        Q4.append(i+1)
-    # ---- Sort into quadrant
+Q1, Q2, Q3, Q4 = rjl.sortQuadrants(list(AllPotentialRefPoints.head().index), AllPotentialRefPoints['Extinction_Index_x'], AllPotentialRefPoints['Extinction_Index_y'], m, b, mPerp, bPerp)
+# ---- Sort into quadrant
 # -------- SORT REF POINTS INTO THESE REGIONS. --------
 
 # -------- OUTPUT RESULTS. --------
@@ -84,30 +65,24 @@ print("Q4: {}".format(Q4))
 n_AllRef = list(AllPotentialRefPoints['ID#'])
 Ra_AllRef = list(AllPotentialRefPoints['Ra(deg)'])
 Dec_AllRef = list(AllPotentialRefPoints['Dec(deg)'])
-RM_AllRef = list(AllPotentialRefPoints['Rotation_Measure(rad/m2)'])
-Av_AllRef = list(AllPotentialRefPoints['Extinction_Value'])
 # ---- Convert Ra and Dec of reference points into pixel values of the fits file
-x_AllRef = []  # x pixel coordinate of reference
-y_AllRef = []  # y pixel coordinate of reference
-for i in range(len(Ra_AllRef)):
-    pixelRow, pixelColumn = wcs.wcs_world2pix(Ra_AllRef[i], Dec_AllRef[i], 0)
-    x_AllRef.append(pixelRow)
-    y_AllRef.append(pixelColumn)
+x_AllRef, y_AllRef = rjl.RADec2xy(Ra_AllRef, Dec_AllRef, wcs)
 # ---- Convert Ra and Dec of reference points into pixel values of the fits file.
 # -------- PREPARE TO PLOT ALL POTENTIAL REFERENCE POINTS. --------
 
 # -------- CREATE A FIGURE - ALL POTENTIAL REF POINTS MAP --------
-fig = plt.figure(figsize=(8, 8), dpi=120, facecolor='w', edgecolor='k')
-ax = fig.add_subplot(111, projection=wcs)
+fig, ax = pt.extinctionPlot(hdu, regionOfInterest)
 
 plt.title('Quadrant division of the ' + cloudName + ' region\n', fontsize=12, y=1.08)
-im = plt.imshow(hdu.data, origin='lower', cmap='BrBG', interpolation='nearest')
 
 plt.plot(x, y)
 plt.plot(x, y2)
-
 ax.set_xlim(0, hdu.data.shape[1])
 ax.set_ylim(0, hdu.data.shape[0])
+if not math.isnan(regionOfInterest.xmax) and not math.isnan(regionOfInterest.xmin):
+    ax.set_xlim(regionOfInterest.xmin, regionOfInterest.xmax)
+if not math.isnan(regionOfInterest.ymax) and not math.isnan(regionOfInterest.ymin):
+    ax.set_ylim(regionOfInterest.ymin, regionOfInterest.ymax)
 
 plt.scatter(x_AllRef, y_AllRef, marker='o', facecolor='green', linewidth=.5, edgecolors='black', s=50)
 
@@ -121,53 +96,9 @@ for i, number in enumerate(n_AllRef):
 adjustText.adjust_text(text)
 # ---- Annotate the chosen reference points
 
-# ---- Style the main axes and their grid
-if not math.isnan(regionOfInterest.xmax) and not math.isnan(regionOfInterest.xmin):
-    ax.set_xlim(regionOfInterest.xmin, regionOfInterest.xmax)
-if not math.isnan(regionOfInterest.ymax) and not math.isnan(regionOfInterest.ymin):
-    ax.set_ylim(regionOfInterest.ymin, regionOfInterest.ymax)
-
-ra = ax.coords[0]
-dec = ax.coords[1]
-ra.set_major_formatter('d')
-dec.set_major_formatter('d')
-ra.set_axislabel('RA (degree)')
-dec.set_axislabel('Dec (degree)')
-
-dec.set_ticks(number=10)
-ra.set_ticks(number=20)
-ra.display_minor_ticks(True)
-dec.display_minor_ticks(True)
-ra.set_minor_frequency(10)
-
-ra.grid(color='black', alpha=0.5, linestyle='solid')
-dec.grid(color='black', alpha=0.5, linestyle='solid')
-# ---- Style the main axes and their grid.
-
-# ---- Style the overlay and its grid
-overlay = ax.get_coords_overlay('galactic')
-
-overlay[0].set_axislabel('Longitude')
-overlay[1].set_axislabel('Latitude')
-
-overlay[0].set_ticks(color='grey', number=20)
-overlay[1].set_ticks(color='grey', number=20)
-
-overlay.grid(color='grey', linestyle='solid', alpha=0.7)
-# ---- Style the overlay and its grid.
-
-# ---- Style the colour bar
-if regionOfInterest.fitsDataType == 'HydrogenColumnDensity':
-    cb = plt.colorbar(im, ticklocation='right', fraction=0.02, pad=0.145, format='%.0e')
-    cb.ax.set_title('Hydrogen Column Density', linespacing=0.5, fontsize=12)
-elif regionOfInterest.fitsDataType == 'VisualExtinction':
-    cb = plt.colorbar(im, ticklocation='right', fraction=0.02, pad=0.145)
-    cb.ax.set_title(' A' + r'$_V$', linespacing=0.5, fontsize=12)
-# ---- Style the colour bar.
-
 # ---- Display or save the figure
 plt.savefig(saveFigurePath)
-#plt.show()
+plt.show()
 plt.close()
 # ---- Display or save the figure.
 # -------- CREATE A FIGURE - ALL POTENTIAL REF POINTS MAP. --------

@@ -39,20 +39,10 @@ MatchedRMExtincPath = os.path.join(config.dir_root, config.dir_fileOutput, confi
 # -------- DEFINE FILES AND PATHS. --------
 
 # -------- CHOOSE THE THRESHOLD EXTINCTION --------
-print('\n---------------------')
-
-print('All potential reference points will be taken to be all points with a visual extinction value less than the '
-      'extinction threshold.')
 if abs(regionOfInterest.cloudLatitude) < config.offDiskLatitude:
     Av_threshold = config.onDiskAvThresh
-    print('\t-For clouds that appear near the disk, such as {}, an appropriate threshold value is {}.'
-          .format(cloudName, Av_threshold))
 else:
     Av_threshold = config.offDiskAvThresh
-    print('\t-For clouds that appear off the disk, such as {}, an appropriate threshold value is {}.'
-          .format(cloudName, Av_threshold))
-
-print("Given this information, the threshold extinction has been set to the suggested {}".format(Av_threshold))
 # -------- CHOOSE THE THRESHOLD EXTINCTION. --------
 
 # -------- LOAD ALL POTENTIAL REFERENCE POINTS --------
@@ -103,8 +93,8 @@ print('---------------------\n')
 # -------- ASK THE USER WHICH POINTS THEY WANT TO USE AS REFERENCE POINTS --------
 chosenRefPoints_Num = [int(item) - 1 for item in input('Please enter the numbers of the reference points you would '
                                                        'like to use as comma separated values').split(',')]
-chosenRefPoints = AllPotentialRefPoints.loc[chosenRefPoints_Num].sort_values('Extinction_Value').reset_index()
-#Todo: Here's where it goes.
+chosenRefPoints = AllPotentialRefPoints.loc[chosenRefPoints_Num].sort_values('Extinction_Value')
+
 print(chosenRefPoints)
 # -------- ASK THE USER WHICH POINTS THEY WANT TO USE AS REFERENCE POINTS. --------
 
@@ -115,38 +105,18 @@ mPerp, bPerp = rjl.getPerpendicularLine(cloudCenterX, cloudCenterY, m)
 # -------- FIND REGIONS TO SPLIT THE CLOUD INTO. --------
 
 # -------- SORT REF POINTS INTO THESE REGIONS. --------
-Q1 = []
-Q2 = []
-Q3 = []
-Q4 = []
-for i in range(len(chosenRefPoints.reset_index())):
-    idNum = chosenRefPoints['ID#'][i]
-    px = chosenRefPoints['Extinction_Index_x'][i]
-    py = chosenRefPoints['Extinction_Index_y'][i]
-
-    # ---- Sort into quadrant
-    aboveCloudLine = rjl.isPointAboveLine(px, py, m, b)
-    aboveCloudPerpLine = rjl.isPointAboveLine(px, py, mPerp, bPerp)
-
-    if aboveCloudLine and aboveCloudPerpLine:
-        Q1.append(i+1)
-    elif aboveCloudLine and not aboveCloudPerpLine:
-        Q2.append(i+1)
-    elif not aboveCloudLine and aboveCloudPerpLine:
-        Q3.append(i+1)
-    elif not aboveCloudLine and not aboveCloudPerpLine:
-        Q4.append(i+1)
-    # ---- Sort into quadrant
+Q1, Q2, Q3, Q4 = rjl.sortQuadrants(list(chosenRefPoints.head().index), chosenRefPoints['Extinction_Index_x'], chosenRefPoints['Extinction_Index_y'], m, b, mPerp, bPerp)
+# ---- Sort into quadrant
 # -------- SORT REF POINTS INTO THESE REGIONS. --------
 
 # -------- OUTPUT RESULTS. --------
-'''
-print("The potential reference points, sorted by quadrant, are:")
+
+print("The chosen reference points, sorted by quadrant, are:")
 print("Q1: {}".format(Q1))
 print("Q2: {}".format(Q2))
 print("Q3: {}".format(Q3))
 print("Q4: {}".format(Q4))
-'''
+
 minSamples = 2
 quadrantsUndersampled = 0
 quadrantsUndersampled = quadrantsUndersampled + 1 if len(Q1) < minSamples else quadrantsUndersampled

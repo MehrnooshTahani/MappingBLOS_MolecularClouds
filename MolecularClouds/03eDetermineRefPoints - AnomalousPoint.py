@@ -49,7 +49,7 @@ print("\t-Anomalous rotation measure values have been defined to be greater or l
 
 # -------- For each potential reference point
 anomalousRMIndex = []
-for i in range(len(AllPotentialRefPoints)):
+for i in list(AllPotentialRefPoints.head().index):
     idNum = AllPotentialRefPoints['ID#'][i]
     if AllPotentialRefPoints['Rotation_Measure(rad/m2)'][i] < rm_lowerLimit or \
             AllPotentialRefPoints['Rotation_Measure(rad/m2)'][i] > rm_upperLimit:
