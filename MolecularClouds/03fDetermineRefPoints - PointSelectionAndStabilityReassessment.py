@@ -60,7 +60,7 @@ wcs = WCS(hdu.header)
 print('---------------------')
 print('By analyzing the stability of calculated BLOS values as a function of number of reference points from 1 to the '
       'total number of reference points ({}):'.format(len(AllPotentialRefPoints)))
-OptimalRefPoints_from_AllPotentialRefPoints = FindOptimalRefPoints(cloudName, AllPotentialRefPoints,
+OptimalRefPoints_from_AllPotentialRefPoints = FindOptimalRefPoints(regionOfInterest, AllPotentialRefPoints,
                                                                    saveFigurePath_BLOSvsNRef_AllPotentialRefPoints)
 
 OptimalNumRefPoints_from_AllPotentialRefPoints = OptimalRefPoints_from_AllPotentialRefPoints. \

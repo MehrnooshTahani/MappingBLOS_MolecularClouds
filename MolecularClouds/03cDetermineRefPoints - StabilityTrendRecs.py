@@ -29,30 +29,14 @@ print('---------------------\n')
 print('---------------------')
 print('By analyzing the stability of calculated BLOS values as a function of number of reference points from 1 to the '
       'total number of reference points ({}):'.format(len(AllPotentialRefPoints)))
-OptimalRefPoints_from_AllPotentialRefPoints = FindOptimalRefPoints(cloudName, AllPotentialRefPoints,
+OptimalRefPoints_from_AllPotentialRefPoints = FindOptimalRefPoints(regionOfInterest, AllPotentialRefPoints,
                                                                    saveFigurePath_BLOSvsNRef_AllPotentialRefPoints)
 
 OptimalNumRefPoints_from_AllPotentialRefPoints = OptimalRefPoints_from_AllPotentialRefPoints. \
     Optimal_NumRefPoints_firstMode
 
-chooseOptimalNumRefPoints = input("Given this information, would you like to select the suggested {} reference points? "
-                                  "(y/n)".
-                                  format(OptimalNumRefPoints_from_AllPotentialRefPoints))
-if chooseOptimalNumRefPoints == 'y':
-    print('The recommended reference points, numbered in order of increasing extinction, are: {}'.format(
+print('The recommended reference points, numbered in order of increasing extinction, are: {}'.format(
         list([i + 1 for i in range(0, OptimalNumRefPoints_from_AllPotentialRefPoints)])))
-
-if chooseOptimalNumRefPoints == 'n':
-    OptimalNumRefPoints_from_AllPotentialRefPoints = int(input('Please enter the number of reference points you '
-                                                               'would like to use instead: '))
-    print('The recommended reference points, numbered in order of increasing extinction, are: {}'.format(
-        list([i + 1 for i in range(0, OptimalNumRefPoints_from_AllPotentialRefPoints)])))
-
-    if OptimalNumRefPoints_from_AllPotentialRefPoints > len(AllPotentialRefPoints):
-        print('The number of reference points chosen exceeds the total number of potential reference points.  '
-              'Using the total number of potential reference points ({})'.format(len(AllPotentialRefPoints)))
-        print('The recommended reference points, numbered in order of increasing extinction, are: {}'.format(
-            list([i + 1 for i in range(0, OptimalNumRefPoints_from_AllPotentialRefPoints)])))
 
 print('Please review the BLOS trend stability plot at {} before confirming the number of reference points you would '
       'like to use.'.format(saveFigurePath_BLOSvsNRef_AllPotentialRefPoints))

@@ -145,7 +145,7 @@ def findTrendData(potentialRefPoints, MatchedRMExtincPath, regionOfInterest):
 
 # -------- CLASS DEFINITION --------
 class FindOptimalRefPoints:
-    def __init__(self, cloudName, potentialRefPoints, saveFigurePath):
+    def __init__(self, regionOfInterest, potentialRefPoints, saveFigurePath):
         """
         This class will determine the optimal number of reference points from a table of potential reference points
 
@@ -153,8 +153,6 @@ class FindOptimalRefPoints:
         :param potentialRefPoints: Table of potential reference points
         :param saveFigurePath: Path to where the Blos vs Nref figure is saved
         """
-
-        regionOfInterest = Region(config.cloud)
 
         # -------- LOAD AND UNPACK MATCHED RM AND EXTINCTION DATA --------
         MatchedRMExtincPath = os.path.join(config.dir_root, config.dir_fileOutput, config.cloud, config.prefix_RMExtinctionMatch + config.cloud + '.txt')

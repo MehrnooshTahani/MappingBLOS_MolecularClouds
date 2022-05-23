@@ -157,7 +157,7 @@ print('Saving the map of all potential reference points to '+saveFigurePath_RefP
 print('---------------------')
 print('By analyzing the stability of calculated BLOS values as a function of number of reference points from 1 to the '
       'total number of reference points ({}):'.format(AllPotentialRefPoints.numAllRefPoints))
-OptimalRefPoints_from_AllPotentialRefPoints = FindOptimalRefPoints(cloudName, AllPotentialRefPoints.AllRefPoints,
+OptimalRefPoints_from_AllPotentialRefPoints = FindOptimalRefPoints(regionOfInterest, AllPotentialRefPoints.AllRefPoints,
                                                                    saveFigurePath_BLOSvsNRef_AllPotentialRefPoints)
 
 OptimalNumRefPoints_from_AllPotentialRefPoints = OptimalRefPoints_from_AllPotentialRefPoints. \
@@ -193,11 +193,11 @@ print('We will now check if any of the potential reference points are near a reg
 # -------- Define the range
 # The distance the point can be from a region of high extinction and still be thought to sample the background
 cloudDistance = regionOfInterest.distance  # [pc]
-cloudJeansLength = config.cloudJeansLength  # [pc]
+cloudJeansLength = regionOfInterest.jeanslength  # [pc]
 minDiff = np.degrees(np.arctan(cloudJeansLength / cloudDistance))  # [deg]
 
 minDiff_pix = minDiff / abs(hdu.header['CDELT1'])
-NDelt = config.pixelCheckMultiplier * math.ceil(minDiff_pix)  # Round up
+NDelt = config.nearExtinctionMultiplier * math.ceil(minDiff_pix)  # Round up
 print("\t-A region around the point has been defined to the suggested {} pixels".format(NDelt))
 
 # Choose the minimum extinction value which you want to correspond to an "on" position
