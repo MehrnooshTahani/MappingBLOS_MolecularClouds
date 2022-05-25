@@ -13,13 +13,15 @@ url = 'https://www.aanda.org/articles/aa/full_html/2018/06/aa32219-17/aa32219-17
 ## Getting Started
 
 ### Requirements
+
+The minimum Python version is 3.6.1.
+
 The following packages must be installed:
 * [astropy](https://www.astropy.org/)
 * [adjustText ](https://adjusttext.readthedocs.io/en/latest/)
 * [matplotlib](https://matplotlib.org/)
 * [numpy](https://numpy.org/)
 * [pandas](https://pandas.pydata.org/)
-* [statistics](https://docs.python.org/3/library/statistics.html)
 
 
 ### Configuration
@@ -37,5 +39,10 @@ The code was updated in 2021 by **Jennifer Glover**
  - Undergraduate co-op Student (National Research Council Canada) 
    - Dominion Radio Astrophysical Observatory
    - University of Victoria
+
+The code was updated in 2022 by **John Ming Ngo**
+ - Undergraduate co-op Student (National Research Council Canada) 
+   - Dominion Radio Astrophysical Observatory
+   - University of Calgary
 
 The code uses outputs of a chemical evolution code. Any chemical evolution code that provides abundances vs extinction (or column density) can be used. In this version we used outputs of a chemical evolution code developed by **René Plume**, at the University of Clagary.
