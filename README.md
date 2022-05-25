@@ -19,6 +19,7 @@ The following packages must be installed:
 * [matplotlib](https://matplotlib.org/)
 * [numpy](https://numpy.org/)
 * [pandas](https://pandas.pydata.org/)
+* [statistics](https://docs.python.org/3/library/statistics.html)
 
 
 ### Configuration

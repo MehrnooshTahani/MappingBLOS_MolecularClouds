@@ -96,7 +96,7 @@ class CalculateB:
             '''
 
             ind = np.where(Av >= self.BLOSData['Scaled_Extinction'][i] / 2)[0][0]
-            #print(i) #debug
+
             indLayerOfInterest.append(ind)
             eAbundanceMatched.append(eAbundance[ind])
 

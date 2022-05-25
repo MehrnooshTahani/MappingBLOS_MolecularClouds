@@ -18,9 +18,9 @@ regionOfInterest = Region(cloudName)
 # -------- CHOOSE THE REGION OF INTEREST. --------
 
 # -------- DEFINE FILES AND PATHS --------
-BScaledFileDir = os.path.join(config.dir_root, config.dir_fileOutput, config.cloud, config.dir_temperatureSensitivity)
-InitialPath = os.path.join(config.dir_root, config.dir_fileOutput, config.cloud, config.dir_temperatureSensitivity + os.sep + 'B_Av_T0_n0.txt')
-saveFigurePath = os.path.join(config.dir_root, config.dir_fileOutput, config.cloud, config.dir_plots + os.sep + 'BTemperatureSensitivity.png')
+BScaledFileDir = os.path.join(config.dir_root, config.dir_fileOutput, cloudName, config.dir_temperatureSensitivity)
+InitialPath = os.path.join(config.dir_root, config.dir_fileOutput, cloudName, config.dir_temperatureSensitivity + os.sep + 'B_Av_T0_n0.txt')
+saveFigurePath = os.path.join(config.dir_root, config.dir_fileOutput, cloudName, config.dir_plots + os.sep + 'BTemperatureSensitivity.png')
 # -------- DEFINE FILES AND PATHS. --------
 
 # -------- EXTRACT ORIGINAL BLOS VALUES --------
@@ -32,6 +32,23 @@ B = list(InitialBData['Magnetic_Field(uG)'])
 p = [5, 10, 20]  # Percents of the input temperature
 percent = ['-{}'.format(i) for i in p[::-1]] + ['0'] + ['+{}'.format(i) for i in p]
 
+errPercent = []
+for i, value in enumerate(percent):
+    AvAbundanceName = 'Av_T' + value + '_n0'
+    BScaledFilePath = BScaledFileDir + os.sep + 'B_' + AvAbundanceName + '.txt'
+    try:
+        BScaledTemp = list(pd.read_csv(BScaledFilePath)['Magnetic_Field(uG)'])
+    except:
+        errPercent.append(BScaledFilePath)
+        percent.remove(value)
+
+if len(errPercent) > 0:
+    print('-------------------------------------------------------------------------------')
+    print('Warning: The following data have not been loaded due to an error.')
+    print('{}'.format(errPercent))
+    print('Please review the results.')
+    print('-------------------------------------------------------------------------------')
+
 # Each row is a BLOS point, each column is the BLOS value corresponding to each percent of the input density
 AllBScaled = np.zeros([len(B), len(percent)])
 
@@ -40,6 +57,8 @@ for i, value in enumerate(percent):
     BScaledFilePath = BScaledFileDir + os.sep + 'B_' + AvAbundanceName + '.txt'
     BScaledTemp = list(pd.read_csv(BScaledFilePath)['Magnetic_Field(uG)'])
     AllBScaled[:, i] = BScaledTemp[:]
+    errPercent.append(BScaledFilePath)
+
 # -------- EXTRACT BLOS FOR EACH PERCENT OF THE INPUT DENSITY. -------
 
 # -------- CHOOSE INDICES OF BLOS POINTS TO PLOT -------

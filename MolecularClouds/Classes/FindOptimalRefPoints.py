@@ -6,10 +6,19 @@ import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
 import os
+import collections
 from .CalculateB import CalculateB
 from .RegionOfInterest import Region
-from statistics import mode
+#from statistics import mode -- Before v3.8, mode returns an error if there are multiple modes. This is not behavior we desire.
 import MolecularClouds.Classes.config as config
+
+def mode(listInput):
+    '''
+    Here we create an alias for a different way to obtain the mode.
+    :param listInput: The list we want to find the mode of.
+    :return: The first mode. If there are many modes, just returns one of them.
+    '''
+    return collections.Counter(listInput).most_common()[0][0]
 
 # -------- CLASS DEFINITION --------
 class FindOptimalRefPoints:
@@ -25,7 +34,7 @@ class FindOptimalRefPoints:
         regionOfInterest = Region(cloudName)
 
         # -------- LOAD AND UNPACK MATCHED RM AND EXTINCTION DATA --------
-        MatchedRMExtincPath = os.path.join(config.dir_root, config.dir_fileOutput, config.cloud, config.prefix_RMExtinctionMatch + config.cloud + '.txt')
+        MatchedRMExtincPath = os.path.join(config.dir_root, config.dir_fileOutput, cloudName, config.prefix_RMExtinctionMatch + cloudName + '.txt')
         matchedRMExtinctionData = pd.read_csv(MatchedRMExtincPath, sep='\t')
         # -------- LOAD AND UNPACK MATCHED RM AND EXTINCTION DATA. --------
 
@@ -65,7 +74,7 @@ class FindOptimalRefPoints:
         Identifiers = list(DataNoRef.index)
         DataNoRef = DataNoRef.reset_index(drop=True)
 
-        DataNoRef.to_csv(os.path.join(config.dir_root, config.dir_fileOutput, config.prefix_OptRefPoints + config.cloud + '.txt'))
+        DataNoRef.to_csv(os.path.join(config.dir_root, config.dir_fileOutput, config.prefix_OptRefPoints + cloudName + '.txt'))
 
         # -------- CREATE A FIGURE --------
         plt.figure(figsize=(6, 4), dpi=120, facecolor='w', edgecolor='k')

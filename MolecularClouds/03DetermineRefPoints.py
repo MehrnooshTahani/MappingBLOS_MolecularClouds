@@ -23,16 +23,16 @@ regionOfInterest = Region(cloudName)
 # -------- CHOOSE THE REGION OF INTEREST. --------
 
 # -------- DEFINE FILES AND PATHS --------
-saveFilePath_ALlPotentialRefPoints = os.path.join(config.dir_root, config.dir_fileOutput, config.cloud, config.prefix_allPotRefPoints + config.cloud + '.txt')
-saveFilePath_ReferencePoints = os.path.join(config.dir_root, config.dir_fileOutput, config.cloud, config.prefix_selRefPoints + config.cloud + '.txt')
-saveFilePath_ReferenceData = os.path.join(config.dir_root, config.dir_fileOutput, config.cloud, config.prefix_refData + config.cloud + '.txt')
+saveFilePath_ALlPotentialRefPoints = os.path.join(config.dir_root, config.dir_fileOutput, cloudName, config.prefix_allPotRefPoints + cloudName + '.txt')
+saveFilePath_ReferencePoints = os.path.join(config.dir_root, config.dir_fileOutput, cloudName, config.prefix_selRefPoints + cloudName + '.txt')
+saveFilePath_ReferenceData = os.path.join(config.dir_root, config.dir_fileOutput, cloudName, config.prefix_refData + cloudName + '.txt')
 
-saveFigurePath_BLOSvsNRef_AllPotentialRefPoints = os.path.join(config.dir_root, config.dir_fileOutput, config.cloud, config.dir_plots, 'BLOS_vs_NRef_AllPotentialRefPoints.png')
-saveFigurePath_BLOSvsNRef_ChosenPotentialRefPoints = os.path.join(config.dir_root, config.dir_fileOutput, config.cloud, config.dir_plots, 'BLOS_vs_NRef_ChosenRefPoints.png')
-saveFigureDir_RefPointMap = os.path.join(config.dir_root, config.dir_fileOutput, config.cloud, config.dir_plots)
+saveFigurePath_BLOSvsNRef_AllPotentialRefPoints = os.path.join(config.dir_root, config.dir_fileOutput, cloudName, config.dir_plots, 'BLOS_vs_NRef_AllPotentialRefPoints.png')
+saveFigurePath_BLOSvsNRef_ChosenPotentialRefPoints = os.path.join(config.dir_root, config.dir_fileOutput, cloudName, config.dir_plots, 'BLOS_vs_NRef_ChosenRefPoints.png')
+saveFigureDir_RefPointMap = os.path.join(config.dir_root, config.dir_fileOutput, cloudName, config.dir_plots)
 
 # -------- Load matched rm and extinction data
-MatchedRMExtincPath = os.path.join(config.dir_root, config.dir_fileOutput, config.cloud, config.prefix_RMExtinctionMatch + config.cloud + '.txt')
+MatchedRMExtincPath = os.path.join(config.dir_root, config.dir_fileOutput, cloudName, config.prefix_RMExtinctionMatch + cloudName + '.txt')
 # -------- Load matched rm and extinction data.
 
 # -------- DEFINE FILES AND PATHS. --------
@@ -198,8 +198,8 @@ print('We will now check if any of the potential reference points are near a reg
 # -------- Define the range
 # The distance the point can be from a region of high extinction and still be thought to sample the background
 cloudDistance = regionOfInterest.distance  # [pc]
-cloudJeansLength = config.cloudJeansLength  # [pc] Mehrnoosh Check this
-minDiff = cloudJeansLength / cloudDistance  # [deg]
+cloudJeansLength = config.cloudJeansLength   # [pc]
+minDiff = np.degrees(np.arctan(cloudJeansLength / cloudDistance))  # [deg]
 
 minDiff_pix = minDiff / abs(hdu.header['CDELT1'])
 NDelt = config.pixelCheckMultiplier * math.ceil(minDiff_pix)  # Round up
@@ -239,7 +239,7 @@ for i in range(len(AllPotenitalRefPoints.AllRefPoints)):
             if 0 <= pxx < hdu.data.shape[1] and 0 <= pyy < hdu.data.shape[0]:
                 extinction_val = hdu.data[pyy, pxx]
                 if extinction_val > highExtinctionThreshold:
-                    highExtinction = False
+                    highExtinction = True
     if highExtinction == True:
         nearHighExtinctionRegion.append(i + 1)  # To identify points numbered in order of increasing extinction
     # ---- Cycle through extinction values within the range.

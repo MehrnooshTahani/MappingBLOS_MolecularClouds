@@ -1,11 +1,15 @@
 import os
 import math
 from configparser import ConfigParser
+'''
+This is the zeroth stage of the BLOSMapping method where the necessary configuration files are created
 
+    - When run, this file will initialize a set of configuration files with default values into the same directory.
+    - Do not run if the config files are already present, as it will overwrite the config files again!
+'''
 # -------- DEFINE STARTING VARIABLES. --------
 configStartSettings = ConfigParser()
 configStartSettings['Cloud'] = {
-    'Cloud': 'Oriona',
     'Cloud Jeans Length': 1
     }
 configStartSettings['Judgement'] = {

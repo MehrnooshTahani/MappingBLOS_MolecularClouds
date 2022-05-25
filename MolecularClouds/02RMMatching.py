@@ -24,7 +24,7 @@ regionOfInterest = Region(cloudName)
 
 # -------- DEFINE FILES AND PATHS --------
 RMCatalogPath = os.path.join(config.dir_root, config.dir_data, config.file_RMCatalogue)
-saveFilePath = os.path.join(config.dir_root, config.dir_fileOutput, config.cloud, config.prefix_RMExtinctionMatch + config.cloud + '.txt')
+saveFilePath = os.path.join(config.dir_root, config.dir_fileOutput, cloudName, config.prefix_RMExtinctionMatch + cloudName + '.txt')
 # -------- DEFINE FILES AND PATHS. --------
 
 # -------- READ FITS FILE --------
@@ -43,8 +43,8 @@ rmData = DataFile(RMCatalogPath, regionOfInterest.raHoursMax, regionOfInterest.r
 # -------- DEFINE THE ERROR RANGE --------
 # The physical limit on how far an extinction value can be from the rm and still be considered valid/applicable
 cloudDistance = regionOfInterest.distance  # [pc]
-cloudJeansLength = config.cloudJeansLength  # [pc] Mehrnoosh Check this
-minDiff = cloudJeansLength / cloudDistance  # [deg]
+cloudJeansLength = config.cloudJeansLength  # [pc]
+minDiff = np.degrees(np.arctan(cloudJeansLength / cloudDistance))  # [deg]
 
 minDiff_pix = minDiff / abs(hdu.header['CDELT1'])
 NDelt = math.ceil(minDiff_pix)  # Round up

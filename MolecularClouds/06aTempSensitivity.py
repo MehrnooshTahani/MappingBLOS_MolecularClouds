@@ -17,9 +17,9 @@ regionOfInterest = Region(cloudName)
 # -------- CHOOSE THE REGION OF INTEREST. --------
 
 # -------- DEFINE FILES AND PATHS --------
-MatchedRMExtincPath = os.path.join(config.dir_root, config.dir_fileOutput, config.cloud, config.prefix_RMExtinctionMatch + config.cloud + '.txt')
-RefPointPath = os.path.join(config.dir_root, config.dir_fileOutput, config.cloud, config.prefix_selRefPoints + config.cloud + '.txt')
-saveFileDir = os.path.join(config.dir_root, config.dir_fileOutput, config.cloud, config.dir_temperatureSensitivity)
+MatchedRMExtincPath = os.path.join(config.dir_root, config.dir_fileOutput, cloudName, config.prefix_RMExtinctionMatch + cloudName + '.txt')
+RefPointPath = os.path.join(config.dir_root, config.dir_fileOutput, cloudName, config.prefix_selRefPoints + cloudName + '.txt')
+saveFileDir = os.path.join(config.dir_root, config.dir_fileOutput, cloudName, config.dir_temperatureSensitivity)
 # -------- DEFINE FILES AND PATHS. --------
 
 # -------- READ REFERENCE POINT TABLE --------
@@ -28,6 +28,7 @@ refPointTable = pd.read_csv(RefPointPath)
 
 # -------- CALCULATE BLOS AS A FUNCTION OF PERCENT OF THE INPUT TEMPERATURE --------
 p = [5, 10, 20]  # Percents of the input temperature
+errPercent = []
 
 # Calculate BLOS at +/- these percents:
 # eg ['-20', '-10', '-5', '0', '+5', '+10', '+20']
@@ -37,7 +38,17 @@ for value in percent:
     AvAbundanceName = 'Av_T' + value + '_n0'
     AvAbundancePath = regionOfInterest.AvFileDir + os.sep + AvAbundanceName + '.out'
     saveFilePath = saveFileDir + os.sep + 'B_' + AvAbundanceName + '.txt'
-    B = CalculateB(AvAbundancePath, MatchedRMExtincPath, refPointTable, saveFilePath)
+    try:
+        B = CalculateB(AvAbundancePath, MatchedRMExtincPath, refPointTable, saveFilePath)
+    except:
+        errPercent.append(value)
+
+if len(errPercent) > 0:
+    print('-------------------------------------------------------------------------------')
+    print('Warning: The following density changes have not been calculated due to an error.')
+    print('{}'.format(errPercent))
+    print('Please review the results.')
+    print('-------------------------------------------------------------------------------')
 
 print('Saving calculated magnetic field values in the folder: '+saveFileDir)
 # -------- CALCULATE BLOS AS A FUNCTION OF PERCENT OF THE INPUT TEMPERATURE. --------

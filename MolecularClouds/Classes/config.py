@@ -6,7 +6,6 @@ from configparser import ConfigParser
 # -------- DEFINE STARTING VARIABLES. --------
 configStartSettings = ConfigParser()
 configStartSettings.read('configStartSettings.ini')
-cloud = configStartSettings['Cloud'].get('Cloud')
 cloudJeansLength = configStartSettings['Cloud'].getfloat('Cloud Jeans Length')
 
 offDiskLatitude = configStartSettings['Judgement'].getfloat('Off Disk Latitude')

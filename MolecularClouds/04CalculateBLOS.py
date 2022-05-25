@@ -50,10 +50,10 @@ regionOfInterest = Region(cloudName)
 # -------- CHOOSE THE REGION OF INTEREST. --------
 
 # -------- DEFINE FILES AND PATHS --------
-FilePath_ReferencePoints = os.path.join(config.dir_root, config.dir_fileOutput, config.cloud, config.prefix_selRefPoints + config.cloud + '.txt')
-FilePath_MatchedRMExtinc = os.path.join(config.dir_root, config.dir_fileOutput, config.cloud, config.prefix_RMExtinctionMatch + cloudName + '.txt')
-saveFilePath_BLOSPoints = os.path.join(config.dir_root, config.dir_fileOutput, config.cloud, config.prefix_BLOSPointData + config.cloud + '.txt')
-saveFigurePath_BLOSPointMap = os.path.join(config.dir_root, config.dir_fileOutput, config.cloud, config.dir_plots, config.prefix_BLOSPointFig + config.cloud + '.png')
+FilePath_ReferencePoints = os.path.join(config.dir_root, config.dir_fileOutput, cloudName, config.prefix_selRefPoints + cloudName + '.txt')
+FilePath_MatchedRMExtinc = os.path.join(config.dir_root, config.dir_fileOutput, cloudName, config.prefix_RMExtinctionMatch + cloudName + '.txt')
+saveFilePath_BLOSPoints = os.path.join(config.dir_root, config.dir_fileOutput, cloudName, config.prefix_BLOSPointData + cloudName + '.txt')
+saveFigurePath_BLOSPointMap = os.path.join(config.dir_root, config.dir_fileOutput, cloudName, config.dir_plots, config.prefix_BLOSPointFig + cloudName + '.png')
 # -------- DEFINE FILES AND PATHS. --------
 
 # -------- LOAD REFERENCE POINT DATA --------
