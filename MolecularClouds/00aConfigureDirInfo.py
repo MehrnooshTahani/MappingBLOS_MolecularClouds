@@ -13,6 +13,7 @@ configStartSettings['Cloud'] = {
     'Cloud Jeans Length': 1
     }
 configStartSettings['Judgement'] = {
+    'Interpolate Bad Extinction Values': True,
     'Off Disk Latitude': 15.,
     'On Disk Extinction Threshold': 2.,
     'Off Disk Extinction Threshold': 1.,

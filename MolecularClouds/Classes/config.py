@@ -8,6 +8,8 @@ configStartSettings = ConfigParser()
 configStartSettings.read('configStartSettings.ini')
 cloudJeansLength = configStartSettings['Cloud'].getfloat('Cloud Jeans Length')
 
+doInterpExtinct = configStartSettings['Judgement'].getboolean('Interpolate Bad Extinction Values')
+
 offDiskLatitude = configStartSettings['Judgement'].getfloat('Off Disk Latitude')
 onDiskAvThresh = configStartSettings['Judgement'].getfloat('On Disk Extinction Threshold')
 offDiskAvThresh = configStartSettings['Judgement'].getfloat('Off Disk Extinction Threshold')

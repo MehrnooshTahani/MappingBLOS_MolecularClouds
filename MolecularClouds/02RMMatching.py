@@ -4,16 +4,24 @@ an extinction value from the fits file. Matching is based on physical proximity.
 
 The matched rotation measure data and extinction information are saved in a file.
 """
-import csv
-from itertools import zip_longest
-from Classes.DataFile import DataFile
 import os
+import csv
+
+from itertools import zip_longest
+
 from astropy.io import fits
 from astropy.wcs import WCS
+
 import numpy as np
 import math
+
+from Classes.DataFile import DataFile
 from Classes.RegionOfInterest import Region
 import Classes.config as config
+
+from Classes.util import getBoxBounds
+import Classes.ConversionLibrary as cl
+import Classes.RefJudgeLib as rjl
 
 # -------- CHOOSE THE REGION OF INTEREST --------
 cloudName = input("Enter the name of the region of interest: ")
@@ -33,21 +41,53 @@ hdu = hdulist[0]
 wcs = WCS(hdu.header)
 # -------- READ FITS FILE. --------
 
+# -------- PREPROCESS FITS DATA TYPE. --------
+data = rjl.deepCopy(hdu.data)
+
+# If fitsDataType is column density, then convert to visual extinction
+if regionOfInterest.fitsDataType == 'HydrogenColumnDensity':
+    data = data / config.VExtinct_2_Hcol
+
+#Handle bad data (negative/no values) by interpolation.
+boxXMin = regionOfInterest.xmin
+boxXMax = regionOfInterest.xmax
+boxYMin = regionOfInterest.ymin
+boxYMax = regionOfInterest.ymax
+
+xmin, xmax, ymin, ymax = getBoxBounds(data, boxXMin, boxXMax, boxYMin, boxYMax)
+
+data[ymin:ymax, xmin:xmax][data[ymin:ymax, xmin:xmax] < 0] = np.nan
+baddata = np.isnan(data)
+if config.doInterpExtinct:
+    data[ymin:ymax, xmin:xmax] = rjl.interpMask(data[ymin:ymax, xmin:xmax], baddata[ymin:ymax, xmin:xmax], 'linear') #This step is computationally costly. It may be omitted if it is taking too long.
+# -------- PREPROCESS FITS DATA TYPE. --------
+
 # -------- READ ROTATION MEASURE FILE --------
 # Get all the rm points within the region of interest
 rmData = DataFile(RMCatalogPath, regionOfInterest.raHoursMax, regionOfInterest.raMinsMax, regionOfInterest.raSecMax,
-                  regionOfInterest.raHoursMin, regionOfInterest.raMinsMin, regionOfInterest.raSecMin,
-                  regionOfInterest.decDegMax, regionOfInterest.decDegMin)
+                   regionOfInterest.raHoursMin, regionOfInterest.raMinsMin, regionOfInterest.raSecMin,
+                   regionOfInterest.decDegMax, regionOfInterest.decDegMin)
 # -------- READ ROTATION MEASURE FILE. --------
 
 # -------- DEFINE THE ERROR RANGE --------
 # The physical limit on how far an extinction value can be from the rm and still be considered valid/applicable
-cloudDistance = regionOfInterest.distance  # [pc]
-cloudJeansLength = config.cloudJeansLength  # [pc]
-minDiff = np.degrees(np.arctan(cloudJeansLength / cloudDistance))  # [deg]
+# Uncertainty based.
+raErrsSec = np.array(rmData.targetRAErrSecs)
+decErrs = np.array(rmData.targetDecErrArcSecs)
 
-minDiff_pix = minDiff / abs(hdu.header['CDELT1'])
-NDelt = math.ceil(minDiff_pix)  # Round up
+raErrSec = max(abs(raErrsSec)) #s
+raErr = cl.ra_hms2deg(0, 0, raErrSec) #deg
+decErrSec = max(abs(decErrs)) #s
+decErr = cl.dec_dms2deg(0, 0, decErrSec) #deg
+
+RMResolutionDegs = max(raErr, decErr)
+
+ExtinctionResolutionDegs = min(abs(hdu.header['CDELT1']), abs(hdu.header['CDELT2'])) #deg
+# -------- It is 1 pixel at most if the extinction map has a lower resolution than the RM map. The maximum number of pixels which fit within the RM's resolution otherwise.
+if (ExtinctionResolutionDegs > RMResolutionDegs):
+    NDelt = 1
+else:
+    NDelt = np.ceil(RMResolutionDegs/ExtinctionResolutionDegs)
 # -------- DEFINE THE ERROR RANGE. --------
 
 # -------- DEFINE PARAMETERS --------
@@ -72,14 +112,9 @@ Extinction_MinInRange = []
 Extinction_MaxInRangeRa = []
 Extinction_MaxInRangeDec = []
 Extinction_MaxInRange = []
+
+IsExtinctionObserved = []
 # -------- DEFINE PARAMETERS. --------
-
-# -------- PREPROCESS FITS DATA TYPE. --------
-# If fitsDataType is column density, then convert to visual extinction
-if regionOfInterest.fitsDataType == 'HydrogenColumnDensity':
-    hdu.data = hdu.data / config.VExtinct_2_Hcol
-
-# -------- PREPROCESS FITS DATA TYPE. --------
 
 # -------- MATCH ROTATION MEASURES AND EXTINCTION VALUES --------
 cntr = 0  # To keep track of how many matches have been made - numbering starts at 0
@@ -93,32 +128,11 @@ for index in range(len(rmData.targetRotationMeasures)):
     # ---- Location of the rotation measure.
 
     # If the rm lies within the given fits file:
-    if 0 <= px < hdu.data.shape[1] and 0 <= py < hdu.data.shape[0]:
+    if 0 <= px < data.shape[1] and 0 <= py < data.shape[0]:
 
         # If the rm lies on a point with data:
-        if hdu.data[py, px] != -1 and math.isnan(hdu.data[py, px]) is False:
-            extinction = hdu.data[py, px]
-            # ---- Negative extinction (the rm value landed on a negative pixel)
-            # Negative extinction is not physical; take the extinction value to be an average of surrounding pixels
-            if extinction < 0:
-                surrondingExtinction = []
-                # Cycle through extinction values within a 1 pixel range
-                ind_xmax = px + 2  # add 1 to be inclusive of the upper bound
-                ind_ymax = py + 2  # add 1 to be inclusive of the upper bound
-                ind_xmin = px - 1
-                ind_ymin = py - 1
-
-                extinction_temp = []
-                ra_temp = []
-                dec_temp = []
-                for pxx in range(ind_xmin, ind_xmax):
-                    for pyy in range(ind_ymin, ind_ymax):
-                        if 0 <= pxx < hdu.data.shape[1] and 0 <= pyy < hdu.data.shape[0]:
-                            # If fitsDataType is column density, then convert to visual extinction
-                            extinctionPixel = hdu.data[pyy, pxx]
-                            surrondingExtinction.append(extinctionPixel)
-                extinction = np.average(surrondingExtinction)
-            # ---- Negative extinction.
+        if data[py, px] != -1 and math.isnan(data[py, px]) is False:
+            extinction = data[py, px]
 
             Identifier.append(cntr)
             RMRa.append(rmRA)
@@ -136,25 +150,21 @@ for index in range(len(rmData.targetRotationMeasures)):
 
             # ---- Find the extinction error range for the given rm
             ErrRangePix.append(NDelt)
-            ind_xmax = px + NDelt + 1  # add 1 to be inclusive of the upper bound
-            ind_ymax = py + NDelt + 1  # add 1 to be inclusive of the upper bound
-            ind_xmin = px - NDelt
-            ind_ymin = py - NDelt
+            ind_xmin, ind_xmax, ind_ymin, ind_ymax = rjl.getBoxRange(px, py, data, NDelt)
             # ---- Find the extinction error range for the given rm.
 
             # ---- Cycle through extinction values within the error range
             extinction_temp = []
             ra_temp = []
             dec_temp = []
+
             for pxx in range(ind_xmin, ind_xmax):
                 for pyy in range(ind_ymin, ind_ymax):
-                    if 0 <= pxx < hdu.data.shape[1] and 0 <= pyy < hdu.data.shape[0]:
-                        extinction = hdu.data[pyy, pxx]
-                        if extinction >= 0:  # Negative extinction is not physical
-                            extinction_temp.append(extinction)
-                            xx, yy = wcs.wcs_pix2world(pxx, pyy, 0)
-                            ra_temp.append(wcs.wcs_pix2world(pxx, pyy, 0)[0])
-                            dec_temp.append(wcs.wcs_pix2world(pxx, pyy, 0)[1])
+                    extinction = data[pyy, pxx]
+                    extinction_temp.append(extinction)
+                    xx, yy = wcs.wcs_pix2world(pxx, pyy, 0)
+                    ra_temp.append(xx)
+                    dec_temp.append(yy)
             # ---- Cycle through extinction values within the error range.
 
             # Find minimum extinction value
@@ -169,6 +179,14 @@ for index in range(len(rmData.targetRotationMeasures)):
             Extinction_MaxInRangeDec.append(dec_temp[ind_max])
             Extinction_MaxInRange.append(extinction_temp[ind_max])
             cntr += 1
+
+            # ---- Negative extinction (the rm value landed on a negative pixel)
+            # Negative extinction is not physical; in prior step it was interpolated away. Mark these points.
+            if baddata[py, px]:
+                IsExtinctionObserved.append(False)
+            else:
+                IsExtinctionObserved.append(True)
+            # ---- Negative extinction.
 # -------- MATCH ROTATION MEASURES AND EXTINCTION VALUES. --------
 
 # -------- WRITE TO A FILE --------
