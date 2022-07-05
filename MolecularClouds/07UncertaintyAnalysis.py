@@ -95,8 +95,9 @@ for densPercent in DensPercent:
 
 if len(errDensPercent) > 0:
     print('-------------------------------------------------------------------------------')
-    print('Warning: The following density changes percentages were not used to calculate the uncertainty due to an error.')
+    print('Warning: The following density changes percentages (+-) were not used to calculate the uncertainty due to an error.')
     print('{}'.format(errDensPercent))
+    print('Ex. 50 means that at least one of the +50 or -50 percentage files had an error.')
     print('Please review the results.')
     print('-------------------------------------------------------------------------------')
 
@@ -115,6 +116,7 @@ if len(errTempPercent) > 0:
     print('-------------------------------------------------------------------------------')
     print('Warning: The following temperature changes percentages were not used to calculate the uncertainty due to an error.')
     print('{}'.format(errTempPercent))
+    print('Ex. 20 means that at least one of the +20 or -20 percentage files had an error.')
     print('Please review the results.')
     print('-------------------------------------------------------------------------------')
 
