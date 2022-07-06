@@ -9,7 +9,7 @@ from . import config
 
 # -------- CLASS DEFINITION --------
 class CalculateB:
-    def __init__(self, AvAbundancePath, ExtincRMPath, RefPointTable, saveFilePath):
+    def __init__(self, AvAbundancePath, ExtincRMPath, RefPointTable, saveFilePath, ZeroNegativeExtinctionEntries = True, DeleteNegativeExtinctionEntries = True):
         """
         Takes files containing extinction, rotation measure data, and reference point data for the region of interest
         and calculates BLOS
@@ -192,7 +192,19 @@ class CalculateB:
         self.BLOSData['BScaled_RM_ERR_with_0.05Uncty'] = (0.1 * self.BLOSData['Magnetic_Field(uG)']) \
                                                     / self.BLOSData['Scaled_RM']
         # -------- CALCULATE THE MAGNETIC FIELD. --------
+        if ZeroNegativeExtinctionEntries:
+            negativeScaledExtinctionIndex = self.BLOSData[self.BLOSData['Scaled_Extinction'] < 0].index.tolist()
+            self.BLOSData.loc[negativeScaledExtinctionIndex, 'Raw_Magnetic_FieldMagnetic_Field(uG)'] = 0
+            self.BLOSData.loc[negativeScaledExtinctionIndex, 'Magnetic_Field(uG)'] = 0
+            self.BLOSData.loc[negativeScaledExtinctionIndex, 'Reference_BField_RMErr(\u00B1)'] = 0
+            self.BLOSData.loc[negativeScaledExtinctionIndex, 'BField_of_Min_Extinction'] = 0
+            self.BLOSData.loc[negativeScaledExtinctionIndex, 'BField_of_Max_Extinction'] = 0
+            self.BLOSData.loc[negativeScaledExtinctionIndex, 'BScaled_RM_ERR_with_0.05Uncty&StDev'] = 0
+            self.BLOSData.loc[negativeScaledExtinctionIndex, 'BScaled_RM_ERR_with_0.05Uncty'] = 0
 
+        if DeleteNegativeExtinctionEntries:
+            negativeScaledExtinctionIndex = self.BLOSData[self.BLOSData['Scaled_Extinction'] < 0].index.tolist()
+            self.BLOSData.drop(negativeScaledExtinctionIndex, inplace = True)
         # -------- SAVE BLOS DATA --------
         if saveFilePath != 'none':
             self.BLOSData.to_csv(saveFilePath, index=False)
