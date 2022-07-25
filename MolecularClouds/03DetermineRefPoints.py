@@ -399,11 +399,11 @@ referenceData['Reference RM Std'] = [np.std(chosenRefPoints['Rotation_Measure(ra
 
 referenceData['Reference Extinction'] = [np.mean(chosenRefPoints['Extinction_Value'])]
 
-referenceData.to_csv(saveFilePath_ReferenceData, index=False)
+referenceData.to_csv(saveFilePath_ReferenceData, index=False, sep='\t')
 print('Reference values were saved to {}'.format(saveFilePath_ReferenceData))
 # -------- CALCULATE AND SAVE REFERENCE VALUES. --------
 
 # -------- SAVE REFERENCE POINTS  --------
-chosenRefPoints.to_csv(saveFilePath_ReferencePoints, index=False)
+chosenRefPoints.to_csv(saveFilePath_ReferencePoints, index=False, sep='\t')
 print('Chosen reference points were saved to {}'.format(saveFilePath_ReferencePoints))
 # -------- SAVE REFERENCE POINTS. --------

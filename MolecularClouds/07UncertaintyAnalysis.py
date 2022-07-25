@@ -47,7 +47,7 @@ saveFilePath = os.path.join(config.dir_root, config.dir_fileOutput, cloudName, c
 # -------- DEFINE FILES AND PATHS --------
 
 # -------- READ BLOS DATA--------
-BData = pd.read_csv(BFilePath)
+BData = pd.read_csv(BFilePath, sep='\t')
 # -------- READ BLOS DATA. --------
 
 # -------- CREATE A TABLE FOR THE UNCERTAINTY DATA --------
@@ -87,8 +87,8 @@ for densPercent in DensPercent:
     try:
         BData_DensityIncreasePath = os.path.join(BData_DensityPathFragment, "B_Av_T0_n+{}.txt".format(densPercent))
         BData_DensityDecreasePath = os.path.join(BData_DensityPathFragment, "B_Av_T0_n-{}.txt".format(densPercent))
-        BChemDensIncrease = list(pd.read_csv(BData_DensityIncreasePath)['Magnetic_Field(uG)'])
-        BChemDensDecrease = list(pd.read_csv(BData_DensityDecreasePath)['Magnetic_Field(uG)'])
+        BChemDensIncrease = list(pd.read_csv(BData_DensityIncreasePath, sep='\t')['Magnetic_Field(uG)'])
+        BChemDensDecrease = list(pd.read_csv(BData_DensityDecreasePath, sep='\t')['Magnetic_Field(uG)'])
         break
     except:
         errDensPercent.append(densPercent)
@@ -106,8 +106,8 @@ for tempPercent in TempPercent:
     try:
         BData_TempIncreasePath = os.path.join(BData_TempPathFragment, "B_Av_T+{}_n0.txt".format(tempPercent))
         BData_TempDecreasePath = os.path.join(BData_TempPathFragment, "B_Av_T-{}_n0.txt".format(tempPercent))
-        BChemTempIncrease = list(pd.read_csv(BData_TempIncreasePath)['Magnetic_Field(uG)'])
-        BChemTempDecrease = list(pd.read_csv(BData_TempDecreasePath)['Magnetic_Field(uG)'])
+        BChemTempIncrease = list(pd.read_csv(BData_TempIncreasePath, sep='\t')['Magnetic_Field(uG)'])
+        BChemTempDecrease = list(pd.read_csv(BData_TempDecreasePath, sep='\t')['Magnetic_Field(uG)'])
         break
     except:
         errTempPercent.append(tempPercent)
@@ -154,7 +154,7 @@ FinalBLOSResults['TotalLowerBUncertainty'] = BTotalLowerUncertainty
 # -------- CALCULATE UNCERTAINTIES. --------
 
 # -------- SAVE FINAL BLOS RESULTS --------
-FinalBLOSResults.to_csv(saveFilePath, index=False)
+FinalBLOSResults.to_csv(saveFilePath, index=False, sep='\t')
 
 print('Saving calculated magnetic field values and associated uncertainties to '+saveFilePath)
 # -------- SAVE FINAL BLOS RESULTS --------

@@ -74,7 +74,7 @@ class FindOptimalRefPoints:
         Identifiers = list(DataNoRef.index)
         DataNoRef = DataNoRef.reset_index(drop=True)
 
-        DataNoRef.to_csv(os.path.join(config.dir_root, config.dir_fileOutput, config.prefix_OptRefPoints + cloudName + '.txt'))
+        DataNoRef.to_csv(os.path.join(config.dir_root, config.dir_fileOutput, config.prefix_OptRefPoints + cloudName + '.txt'), sep='\t')
 
         # -------- CREATE A FIGURE --------
         plt.figure(figsize=(6, 4), dpi=120, facecolor='w', edgecolor='k')

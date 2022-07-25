@@ -24,7 +24,7 @@ saveFigurePath = os.path.join(config.dir_root, config.dir_fileOutput, cloudName,
 # -------- DEFINE FILES AND PATHS. --------
 
 # -------- EXTRACT ORIGINAL BLOS VALUES --------
-InitialBData = pd.read_csv(InitialPath)
+InitialBData = pd.read_csv(InitialPath, sep='\t')
 B = list(InitialBData['Magnetic_Field(uG)'])
 # -------- EXTRACT ORIGINAL BLOS VALUES. --------
 
@@ -38,7 +38,7 @@ for i, value in enumerate(percent):
     AvAbundanceName = 'Av_T0_n' + value
     BScaledFilePath = BScaledFileDir + os.sep + 'B_' + AvAbundanceName + '.txt'
     try:
-        BScaledTemp = list(pd.read_csv(BScaledFilePath)['Magnetic_Field(uG)'])
+        BScaledTemp = list(pd.read_csv(BScaledFilePath, sep='\t')['Magnetic_Field(uG)'])
     except:
         errPercent.append(value)
         errPercentFiles.append(BScaledFilePath)
@@ -57,7 +57,7 @@ AllBScaled = np.zeros([len(B), len(percent)])
 for i, value in enumerate(percent):
     AvAbundanceName = 'Av_T0_n' + value
     BScaledFilePath = BScaledFileDir + os.sep + 'B_' + AvAbundanceName + '.txt'
-    BScaledTemp = list(pd.read_csv(BScaledFilePath)['Magnetic_Field(uG)'])
+    BScaledTemp = list(pd.read_csv(BScaledFilePath, sep='\t')['Magnetic_Field(uG)'])
     AllBScaled[:, i] = BScaledTemp[:]
 
 # -------- EXTRACT BLOS FOR EACH PERCENT OF THE INPUT DENSITY. -------

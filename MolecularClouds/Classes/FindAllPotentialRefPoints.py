@@ -49,7 +49,7 @@ class FindAllPotentialReferencePoints:
 
         # -------- SAVE REFERENCE POINT DATA AS A TABLE --------
         if saveFilePath != 'none':
-            self.AllRefPoints.to_csv(saveFilePath, index=False)
+            self.AllRefPoints.to_csv(saveFilePath, index=False, sep='\t')
         # -------- SAVE REFERENCE POINT DATA AS A TABLE. --------
 
 # -------- CLASS DEFINITION. --------

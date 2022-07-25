@@ -57,7 +57,7 @@ saveFigurePath_BLOSPointMap = os.path.join(config.dir_root, config.dir_fileOutpu
 # -------- DEFINE FILES AND PATHS. --------
 
 # -------- LOAD REFERENCE POINT DATA --------
-refData = pd.read_csv(FilePath_ReferencePoints)
+refData = pd.read_csv(FilePath_ReferencePoints, sep='\t')
 # -------- LOAD REFERENCE POINT DATA. --------
 
 # -------- READ FITS FILE --------
@@ -67,15 +67,15 @@ wcs = WCS(hdu.header)
 # -------- READ FITS FILE. --------
 
 # -------- CALCULATE BLOS --------
-BLOS = CalculateB(regionOfInterest.AvFilePath, FilePath_MatchedRMExtinc, refData, saveFilePath=saveFilePath_BLOSPoints)
+BLOSData = CalculateB(regionOfInterest.AvFilePath, FilePath_MatchedRMExtinc, refData, saveFilePath=saveFilePath_BLOSPoints)
 print('Saving calculated magnetic field values to '+saveFilePath_BLOSPoints)
 # -------- CALCULATE BLOS. --------
 
 # -------- PREPARE TO PLOT BLOS POINTS --------
-n = list(BLOS.BLOSData['ID#'])
-Ra = list(BLOS.BLOSData['Ra(deg)'])
-Dec = list(BLOS.BLOSData['Dec(deg)'])
-BLOS = list(BLOS.BLOSData['Magnetic_Field(uG)'])
+n = list(BLOSData.BLOSData['ID#'])
+Ra = list(BLOSData.BLOSData['Ra(deg)'])
+Dec = list(BLOSData.BLOSData['Dec(deg)'])
+BLOS = list(BLOSData.BLOSData['Magnetic_Field(uG)'])
 # ---- Convert Ra and Dec of points into pixel values of the fits file
 x = []  # x pixel coordinate
 y = []  # y pixel coordinate

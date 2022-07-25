@@ -23,7 +23,7 @@ saveFileDir = os.path.join(config.dir_root, config.dir_fileOutput, cloudName, co
 # -------- DEFINE FILES AND PATHS. --------
 
 # -------- READ REFERENCE POINT TABLE --------
-refPointTable = pd.read_csv(RefPointPath)
+refPointTable = pd.read_csv(RefPointPath, sep='\t')
 # -------- READ REFERENCE POINT TABLE. --------
 
 # -------- CALCULATE BLOS AS A FUNCTION OF PERCENT OF THE INPUT TEMPERATURE --------

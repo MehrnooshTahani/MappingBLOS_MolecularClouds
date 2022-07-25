@@ -207,5 +207,5 @@ class CalculateB:
             self.BLOSData.drop(negativeScaledExtinctionIndex, inplace = True)
         # -------- SAVE BLOS DATA --------
         if saveFilePath != 'none':
-            self.BLOSData.to_csv(saveFilePath, index=False)
+            self.BLOSData.to_csv(saveFilePath, index=False, sep='\t')
         # -------- SAVE BLOS DATA. --------
